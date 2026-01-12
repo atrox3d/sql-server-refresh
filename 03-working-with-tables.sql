@@ -71,7 +71,7 @@ IF OBJECT_ID('dbo.tblPerson', 'U') IS NULL
             [ID] INT NOT NULL PRIMARY KEY,
             [Name] NVARCHAR(50) NOT NULL,
             [Email] NVARCHAR(50) NOT NULL,
-            [GenderId] INT NOT NULL
+            [GenderId] INT
         );
         PRINT 'INFO | Table dbo.tblPerson created.';
     END
