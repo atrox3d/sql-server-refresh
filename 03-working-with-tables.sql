@@ -53,11 +53,12 @@ ELSE
     END
 GO
 
--- EXAMPLE: Insert data into tblGender if it is empty
+-- EXAMPLE: Insert data into tblGender (Only if the table is empty)
 -- IF NOT EXISTS (SELECT * FROM dbo.tblGender)
 -- BEGIN
 --     INSERT INTO dbo.tblGender (ID, Gender) 
 --     VALUES (1, 'Male'), (2, 'Female'), (3, 'Unknown');
+    
 --     PRINT 'INFO | Data inserted into dbo.tblGender.';
 -- END
 -- GO
@@ -80,13 +81,14 @@ ELSE
     END
 GO
 
--- EXAMPLE: Insert data into tblPerson if it is empty
+-- EXAMPLE: Insert data into tblPerson (Only if the table is empty)
 -- IF NOT EXISTS (SELECT * FROM dbo.tblPerson)
 -- BEGIN
 --     INSERT INTO dbo.tblPerson (ID, Name, Email, GenderId) 
 --     VALUES (1, 'Tom', 'tom@test.com', 1),
 --            (2, 'Sara', 'sara@test.com', 2),
 --            (3, 'Bob', 'bob@test.com', 1);
+           
 --     PRINT 'INFO | Data inserted into dbo.tblPerson.';
 -- END
 -- GO
