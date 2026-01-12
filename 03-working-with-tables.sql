@@ -41,9 +41,9 @@ GO
 -- create table gender
 IF OBJECT_ID('dbo.tblGender', 'U') IS NULL
     BEGIN
-        CREATE TABLE dbo.tblGender (
-            ID INT NOT NULL PRIMARY KEY,
-            Gender NVARCHAR(50) NOT NULL
+        CREATE TABLE [dbo].[tblGender] (
+            [ID] INT NOT NULL PRIMARY KEY,
+            [Gender] NVARCHAR(50) NOT NULL
         );
         PRINT 'INFO | Table dbo.tblGender created.';
     END
@@ -67,11 +67,11 @@ GO
 -- create table person
 IF OBJECT_ID('dbo.tblPerson', 'U') IS NULL
     BEGIN
-        CREATE TABLE dbo.tblPerson (
-            ID INT NOT NULL PRIMARY KEY,
-            Name NVARCHAR(50) NOT NULL,
-            Email NVARCHAR(50) NOT NULL,
-            GenderId INT NOT NULL
+        CREATE TABLE [dbo].[tblPerson] (
+            [ID] INT NOT NULL PRIMARY KEY,
+            [Name] NVARCHAR(50) NOT NULL,
+            [Email] NVARCHAR(50) NOT NULL,
+            [GenderId] INT NOT NULL
         );
         PRINT 'INFO | Table dbo.tblPerson created.';
     END
