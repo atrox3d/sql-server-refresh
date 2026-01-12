@@ -8,10 +8,10 @@ SELECT DB_NAME() AS db_name;
 PRINT 'INFO | Initial Database Context: ' + DB_NAME();
 GO
 
+--- prepare data
 DELETE FROM sample.dbo.tblPerson;
 GO
 
---- prepare data
 INSERT INTO sample.dbo.tblPerson
 VALUES 
     (1, 'john',  'j@j.com',      1),
