@@ -26,17 +26,19 @@ PRINT 'INFO | Executing sp_ResetDemoData...'
 EXEC dbo.sp_ResetDemoData;
 GO
 
--- 2. Re-create it with the Cascade rule
+--*********************************
+-- 2. Re-create FK without the Cascade rule
+--*********************************
 ALTER TABLE sample.dbo.tblPerson
 ADD CONSTRAINT FK_tblPerson_tblGender
 FOREIGN KEY (GenderId) REFERENCES sample.dbo.tblGender(ID)
 PRINT 'INFO | Foreign Key FK_tblPerson_tblGender recreated without cascading.';
 GO
 
-SELECT * FROM sample.dbo.tblPerson
-WHERE ID = 2;
 SELECT * FROM sample.dbo.tblGender;
 GO
+SELECT * FROM sample.dbo.tblPerson
+WHERE ID = 2;
 
 --*********************************
 --- start lesson
@@ -58,7 +60,7 @@ DELETE FROM tblGender WHERE ID = 2;
 --      all the rows containing that foreign key will be set to a default value (constraint)
 
 --*********************************
--- add on delete set null
+-- recreate FK with on delete set null
 --*********************************
 IF OBJECT_ID('sample.dbo.FK_tblPerson_tblGender', 'F') IS NOT NULL
     BEGIN
@@ -80,7 +82,7 @@ DELETE FROM tblGender WHERE ID = 2;
 PRINT 'INFO | Data deleted from dbo.tblGender, corresponding records in dbo.tblPerson set to default';
 GO
 
-SELECT * FROM sample.dbo.tblPerson
-WHERE ID = 2;
 SELECT * FROM sample.dbo.tblGender;
 GO
+SELECT * FROM sample.dbo.tblPerson
+WHERE ID = 2;
