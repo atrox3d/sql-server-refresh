@@ -1,3 +1,8 @@
+-- SQLCMD Mode command: Stop execution on any error in any batch.
+-- This must be enabled in the client (e.g., SSMS Query -> SQLCMD Mode).
+-- :ON ERROR EXIT
+-- GO
+
 USE [sample];
 GO
 
@@ -55,20 +60,28 @@ BEGIN
 END
 GO
 
-PRINT 'INFO | trying to add wrong age after setting check constraint...';
-INSERT INTO tblPerson
-VALUES
-(7, 'wrongage', 'wrong@age.com', 1, -1000);
--- The ALTER TABLE statement conflicted with the CHECK constraint "CK_tblPerson_Age". 
--- The conflict occurred in database "sample", table "dbo.tblPerson", column 'Age'.
+-- Demonstrate TRY...CATCH to handle errors within a batch
+BEGIN TRY
+    PRINT 'INFO | Trying to add wrong age after setting check constraint...';
+    INSERT INTO tblPerson VALUES (7, 'wrongage', 'wrong@age.com', 1, -1000);
+    PRINT 'INFO | This line will NOT be reached.';
+END TRY
+BEGIN CATCH
+    PRINT 'ERROR | An error occurred. Execution jumped to the CATCH block.';
+    PRINT 'ERROR | Error Number: ' + CAST(ERROR_NUMBER() AS VARCHAR);
+    PRINT 'ERROR | Error Message: ' + ERROR_MESSAGE();
+    -- To stop the entire script, we must re-throw the error.
+    -- Because of ":ON ERROR EXIT" at the top, this will terminate the script.
+    THROW; 
+END CATCH
 GO
 
-PRINT 'INFO | adding null age after setting check constraint...';
+PRINT 'INFO | This batch will NOT execute because the previous batch re-threw an error.';
+PRINT 'INFO | Adding null age. This will SUCCEED because CHECK constraints allow NULLs by default.';
 INSERT INTO tblPerson
 VALUES
 (8, 'nullage', 'null@age.com', 1, NULL);
--- The ALTER TABLE statement conflicted with the CHECK constraint "CK_tblPerson_Age". 
--- The conflict occurred in database "sample", table "dbo.tblPerson", column 'Age'.
+PRINT 'INFO | NULL value inserted successfully.';
 GO
 
 SELECT * from tblPerson;
