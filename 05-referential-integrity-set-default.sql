@@ -68,7 +68,7 @@ IF OBJECT_ID('sample.dbo.FK_tblPerson_tblGender', 'F') IS NOT NULL
         ALTER TABLE sample.dbo.tblPerson DROP CONSTRAINT FK_tblPerson_tblGender;
         PRINT 'INFO | Foreign Key FK_tblPerson_tblGender dropped.';
     END
--- 2. Re-create it with the Cascade rule
+-- 2. Re-create it with the set default rule
 ALTER TABLE sample.dbo.tblPerson
 ADD CONSTRAINT FK_tblPerson_tblGender
 FOREIGN KEY (GenderId) REFERENCES sample.dbo.tblGender(ID)
