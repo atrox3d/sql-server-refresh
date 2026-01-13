@@ -2,6 +2,9 @@
 -- This must be enabled in the client (e.g., SSMS Query -> SQLCMD Mode).
 -- :ON ERROR EXIT
 -- GO
+-- Ensure we start with execution enabled (in case previous run stopped it)
+SET NOEXEC OFF;
+GO
 
 USE [sample];
 GO
@@ -72,11 +75,15 @@ BEGIN CATCH
     PRINT 'ERROR | Error Message: ' + ERROR_MESSAGE();
     -- To stop the entire script, we must re-throw the error.
     -- Because of ":ON ERROR EXIT" at the top, this will terminate the script.
-    THROW; 
+    -- THROW; 
+    -- Stop the script execution for subsequent batches
+    PRINT 'ERROR | Stopping script execution via SET NOEXEC ON.';
+    SET NOEXEC ON;
 END CATCH
 GO
 
 PRINT 'INFO | This batch will NOT execute because the previous batch re-threw an error.';
+PRINT 'INFO | This batch will NOT execute because the previous batch set NOEXEC ON.';
 PRINT 'INFO | Adding null age. This will SUCCEED because CHECK constraints allow NULLs by default.';
 INSERT INTO tblPerson
 VALUES
