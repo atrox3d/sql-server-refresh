@@ -9,7 +9,7 @@ PRINT 'INFO | Initial Database Context: ' + DB_NAME();
 GO
 
 --*********************************
--- restore original FK constraint
+-- delete original FK constraint before restoring data
 --*********************************
 IF OBJECT_ID('sample.dbo.FK_tblPerson_tblGender', 'F') IS NOT NULL
     BEGIN
@@ -22,15 +22,9 @@ GO
 --*********************************
 --- prepare data
 --*********************************
-DELETE FROM sample.dbo.tblGender;
-PRINT 'INFO | Data deleted from dbo.tblGender.';
+PRINT 'INFO | Executing sp_ResetDemoData...'
+EXEC dbo.sp_ResetDemoData;
 GO
-
-INSERT INTO dbo.tblGender (ID, Gender) 
-VALUES (1, 'Male'), (2, 'Female'), (3, 'Unknown');
-PRINT 'INFO | Data inserted into dbo.tblGender.';
-GO
-
 
 -- 2. Re-create it with the Cascade rule
 ALTER TABLE sample.dbo.tblPerson
@@ -39,25 +33,10 @@ FOREIGN KEY (GenderId) REFERENCES sample.dbo.tblGender(ID)
 PRINT 'INFO | Foreign Key FK_tblPerson_tblGender recreated without cascading.';
 GO
 
-DELETE FROM sample.dbo.tblPerson;
-PRINT 'INFO | Data deleted from dbo.tblPerson.';
-GO
-
-INSERT INTO sample.dbo.tblPerson
-VALUES 
-    (1, 'john',   'j@j.com',      1),
-    (2, 'simon',  's@s.com',      2),
-    (3, 'rich',   'r@r.com',      1),
-    (4, 'sara',   's@r.com',      3),
-    (5, 'Johnny', 'j@r.com',      3);
-PRINT 'INFO | Data inserted into dbo.tblPerson.';
-GO
-
 SELECT * FROM sample.dbo.tblPerson
 WHERE ID = 2;
 SELECT * FROM sample.dbo.tblGender;
 GO
-
 
 --*********************************
 --- start lesson
@@ -87,8 +66,6 @@ IF OBJECT_ID('sample.dbo.FK_tblPerson_tblGender', 'F') IS NOT NULL
         ALTER TABLE sample.dbo.tblPerson DROP CONSTRAINT FK_tblPerson_tblGender;
         PRINT 'INFO | Foreign Key FK_tblPerson_tblGender dropped.';
     END
-GO
-
 -- 2. Re-create it with the Cascade rule
 ALTER TABLE sample.dbo.tblPerson
 ADD CONSTRAINT FK_tblPerson_tblGender

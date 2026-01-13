@@ -24,14 +24,18 @@ BEGIN
 
     -- 1. Clean up (Order matters due to Foreign Keys!)
     -- We must delete Child (Person) before Parent (Gender)
+    PRINT 'INFO | sp_ResetDemoData: deleting tblPerson...';
     DELETE FROM sample.dbo.tblPerson;
+    PRINT 'INFO | sp_ResetDemoData: deleting tblGender...';
     DELETE FROM sample.dbo.tblGender;
 
     -- 2. Reseed Parent Table
+    PRINT 'INFO | sp_ResetDemoData: inserting into tblGender...';
     INSERT INTO sample.dbo.tblGender (ID, Gender)
     VALUES (1, 'Male'), (2, 'Female'), (3, 'Unknown');
 
     -- 3. Reseed Child Table
+    PRINT 'INFO | sp_ResetDemoData: inserting into tblPerson...';
     INSERT INTO sample.dbo.tblPerson (ID, Name, Email, GenderId)
     VALUES 
         (1, 'john',   'j@j.com',      1),
@@ -45,5 +49,5 @@ END
 GO
 
 -- Now, in your other scripts, you can replace those 20 lines with just this:
-EXEC dbo.sp_ResetDemoData;
-GO
+-- EXEC dbo.sp_ResetDemoData;
+-- GO
