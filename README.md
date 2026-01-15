@@ -1,9 +1,9 @@
-# Setup SQL Server with docker on arm (vscode)
+# Setup SQL Server with docker on vscode
 [sqlserver+docker](https://youtu.be/JwChEzHTuN8)
 
     vscode extension: ms-mssql.mssql
 
-## other resources
+## other resources for ARM/MacOS
 [Development with SQL in containers on macOS](https://devblogs.microsoft.com/azure-sql/development-with-sql-in-containers-on-macos/)
 
 
