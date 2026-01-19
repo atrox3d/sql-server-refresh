@@ -20,10 +20,6 @@ IF OBJECT_ID('dbo.tblPerson1', 'U') IS NOT NULL
     DROP TABLE dbo.tblPerson1;
 GO
 
-IF OBJECT_ID('dbo.tblPerson1') IS NOT NULL
-    DROP TABLE dbo.tblPerson1;
-GO
-
 CREATE TABLE dbo.tblPerson1 (
     ID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
     Name NVARCHAR(50) NOT NULL
