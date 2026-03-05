@@ -20,9 +20,11 @@ CREATE TABLE dbo.LegacyTable (
     ProductData VARCHAR(50)
 );
 
-INSERT INTO dbo.LegacyTable (LegacyID, ProductData) VALUES (101, 'Widget');
-INSERT INTO dbo.LegacyTable (LegacyID, ProductData) VALUES (102, 'Gadget');
-INSERT INTO dbo.LegacyTable (LegacyID, ProductData) VALUES (103, 'Doohickey');
+INSERT INTO dbo.LegacyTable (LegacyID, ProductData) 
+VALUES 
+    (101, 'Widget'),
+    (102, 'Gadget'),
+    (103, 'Doohickey');
 
 PRINT 'INFO | Initial table state (LegacyID is just a regular INT):';
 SELECT * FROM dbo.LegacyTable;

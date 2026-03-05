@@ -4,7 +4,9 @@ IF DB_ID('sample') IS NULL
 GO
 
 -- check if there is a db 'sample'
-SELECT name, database_id, create_date
+SELECT  name
+        , database_id
+        , create_date
 FROM sys.databases
 WHERE name = 'sample';
 GO

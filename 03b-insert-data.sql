@@ -1,18 +1,27 @@
 USE [sample];
 GO
 
--- Best Practice: Stop "rows affected" noise
+/*
+    Best Practice: Stop "rows affected" noise
+*/
 SET NOCOUNT ON;
 
 SELECT DB_NAME() AS db_name;
 PRINT 'INFO | Initial Database Context: ' + DB_NAME();
 GO
 
-IF NOT EXISTS (SELECT * FROM dbo.tblGender)
+/*
+************************************************************************************
+    create genders if tables is empty
+************************************************************************************
+*/
+IF NOT EXISTS (SELECT * FROM dbo.tblGender)         -- check fo emptiness
     BEGIN
         INSERT INTO dbo.tblGender (ID, Gender) 
-        VALUES (1, 'Male'), (2, 'Female'), (3, 'Unknown');
-        
+        VALUES 
+            (1, 'Male'), 
+            (2, 'Female'), 
+            (3, 'Unknown');
         PRINT 'INFO | Data inserted into dbo.tblGender.';
     END
 ELSE
@@ -21,31 +30,64 @@ ELSE
     END
 GO
 
--- Using the 3-part name (Database.Schema.Table)
--- 'dbo' is the default schema (Database Owner)
--- Schemas act like namespaces (e.g. Sales.Table vs HR.Table)
+/*
+************************************************************************************
+    Using the 3-part name (Database.Schema.Table)
+    'dbo' is the default schema (Database Owner)
+    Schemas act like namespaces (e.g. Sales.Table vs HR.Table)
+************************************************************************************
+*/
 SELECT * FROM sample.dbo.tblGender;
 GO
 
--- testing fk
+/*
+************************************************************************************
+    testing fk
+************************************************************************************
+*/
 DELETE FROM sample.dbo.tblPerson;
 GO
 
+/*
+************************************************************************************
+    missing values (nulls) are allowed, no fk violation
+************************************************************************************
+*/
 INSERT INTO sample.dbo.tblPerson
 (ID, Name, Email)                       -- need to specify columns due to missing gender value
 VALUES (1, 'john', 'j@j.com');          -- no gender
 GO
 
+/*
+************************************************************************************
+    illegal gender values are not allowed, fk violation
+************************************************************************************
+*/
 INSERT INTO sample.dbo.tblPerson
 -- (ID, Name, Email)
 VALUES (2, 'mary', 'm@m.com', 99);      -- illegal gender
--- The INSERT statement conflicted with the FOREIGN KEY constraint "FK_tblPerson_tblGender". 
--- The conflict occurred in database "sample", table "dbo.tblGender", column 'ID'.
+/*
+    The INSERT statement conflicted with the FOREIGN KEY constraint "FK_tblPerson_tblGender". 
+    The conflict occurred in database "sample", table "dbo.tblGender", column 'ID'.
+*/
 GO
 
 INSERT INTO sample.dbo.tblPerson
 VALUES (2, 'mary', 'm@m.com', 2);      -- correct gender
 GO
 
-SELECT * FROM sample.dbo.tblPerson;
+
+/*
+************************************************************************************
+    test each genderid value against tblgender.ID
+************************************************************************************
+*/
+SELECT
+    *,
+    CASE 
+        WHEN GenderID IN (SELECT ID FROM sample.dbo.tblGender) THEN 'Valid'
+        ELSE 'Invalid'
+    END AS GenderStatus
+FROM 
+    sample.dbo.tblPerson;
 GO

@@ -2,12 +2,12 @@ PRINT 'INFO | --- How to "Describe" a Table in SQL Server ---';
 PRINT 'INFO | There is no DESCRIBE command. Use the sp_help system stored procedure.';
 GO
 
-This is the primary equivalent of DESCRIBE. It returns multiple result sets
-with columns, indexes, constraints, etc.
+-- This is the primary equivalent of DESCRIBE. It returns multiple result sets
+-- with columns, indexes, constraints, etc.
 EXEC sp_help 'dbo.Test1';
 GO
 
-For just column information, you can use sp_columns.
+-- For just column information, you can use sp_columns.
 PRINT 'INFO | For a more focused view on just the columns, use sp_columns:';
 EXEC sp_columns 'Test1';
 GO

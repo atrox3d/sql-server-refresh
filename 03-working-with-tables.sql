@@ -1,44 +1,80 @@
--- Switch back to master to "unuse" the current database
--- use master;
--- select DB_NAME() as db_name;
--- go
-
-USE [sample];
-GO
-
+/*
+Switch back to master to "unuse" the current database
+*/
 -- Best Practice: Stop "rows affected" noise
 SET NOCOUNT ON;
 
+use master;
+select DB_NAME() as db_name;
+go
+
+USE [sample];
 SELECT DB_NAME() AS db_name;
 PRINT 'INFO | Initial Database Context: ' + DB_NAME();
 GO
 
+/*
 -- EXAMPLE: create table to demonstrate char types
--- CREATE TABLE tblEmployee (
---     ID INT NOT NULL PRIMARY KEY,
---     -- CHAR: Fixed length, non-Unicode. Good for fixed codes.
---     Code CHAR(5), 
---     -- VARCHAR: Variable length, non-Unicode. Good for standard ASCII text.
---     Email VARCHAR(100),
---     -- NVARCHAR: Variable length, Unicode (UTF-16). Good for names/international text.
---     Name NVARCHAR(100)
--- );
--- GO
+CREATE TABLE tblEmployee (
+    ID INT NOT NULL PRIMARY KEY,
+    -- CHAR: Fixed length, non-Unicode. Good for fixed codes.
+    Code CHAR(5), 
+    -- VARCHAR: Variable length, non-Unicode. Good for standard ASCII text.
+    Email VARCHAR(100),
+    -- NVARCHAR: Variable length, Unicode (UTF-16). Good for names/international text.
+    Name NVARCHAR(100)
+);
+GO
+*/
 
+/*
 -- EXAMPLE: Using @@ERROR to check if a command failed
 -- Try to switch to a database that does not exist
--- USE [GhostDatabase];
+USE [GhostDatabase];
 
 -- -- Check the error variable immediately
--- IF @@ERROR <> 0
--- BEGIN
---     PRINT 'Error: The database could not be found.';
---     -- You could put logic here to handle the failure
--- END;
+IF @@ERROR <> 0
+BEGIN
+    PRINT 'Error: The database could not be found.';
+    -- You could put logic here to handle the failure
+END;
+*/
 
--- Best Practice: Create reference tables (Gender) BEFORE dependent tables (Person)
+/*
+************************************************************************************
+    get all available params for OBJECT_ID() function
+************************************************************************************
+*/
+SELECT DISTINCT type, type_desc 
+FROM sys.all_objects  -- 'all_objects' includes system-level definitions
+ORDER BY type;
+GO
+/*
+************************************************************************************
+type    type_desc
+---     ------------------
+AF      AGGREGATE_FUNCTION
+FN	    SQL_SCALAR_FUNCTION
+FS	    CLR_SCALAR_FUNCTION
+IF	    SQL_INLINE_TABLE_VALUED_FUNCTION
+IT	    INTERNAL_TABLE
+P 	    SQL_STORED_PROCEDURE
+PC	    CLR_STORED_PROCEDURE
+S 	    SYSTEM_TABLE
+SQ	    SERVICE_QUEUE
+TF	    SQL_TABLE_VALUED_FUNCTION
+U 	    USER_TABLE
+V 	    VIEW
+X 	    EXTENDED_STORED_PROCEDURE
+************************************************************************************
+*/
 
--- create table gender
+/*
+************************************************************************************
+    Best Practice: Create reference tables (Gender) BEFORE dependent tables (Person)
+    because person will have a reference to it (03a)
+************************************************************************************
+*/
 IF OBJECT_ID('dbo.tblGender', 'U') IS NULL
     BEGIN
         CREATE TABLE [dbo].[tblGender] (
@@ -53,18 +89,23 @@ ELSE
     END
 GO
 
--- EXAMPLE: Insert data into tblGender (Only if the table is empty)
--- IF NOT EXISTS (SELECT * FROM dbo.tblGender)
--- BEGIN
---     INSERT INTO dbo.tblGender (ID, Gender) 
---     VALUES (1, 'Male'), (2, 'Female'), (3, 'Unknown');
+/*
+EXAMPLE: Insert data into tblGender (Only if the table is empty)
+IF NOT EXISTS (SELECT * FROM dbo.tblGender)
+BEGIN
+    INSERT INTO dbo.tblGender (ID, Gender) 
+    VALUES (1, 'Male'), (2, 'Female'), (3, 'Unknown');
     
---     PRINT 'INFO | Data inserted into dbo.tblGender.';
--- END
--- GO
+    PRINT 'INFO | Data inserted into dbo.tblGender.';
+END
+GO
+*/
 
-
--- create table person
+/*
+************************************************************************************
+    create table person
+************************************************************************************
+*/
 IF OBJECT_ID('dbo.tblPerson', 'U') IS NULL
     BEGIN
         CREATE TABLE [dbo].[tblPerson] (
@@ -81,14 +122,44 @@ ELSE
     END
 GO
 
--- EXAMPLE: Insert data into tblPerson (Only if the table is empty)
--- IF NOT EXISTS (SELECT * FROM dbo.tblPerson)
--- BEGIN
---     INSERT INTO dbo.tblPerson (ID, Name, Email, GenderId) 
---     VALUES (1, 'Tom', 'tom@test.com', 1),
---            (2, 'Sara', 'sara@test.com', 2),
---            (3, 'Bob', 'bob@test.com', 1);
-           
---     PRINT 'INFO | Data inserted into dbo.tblPerson.';
--- END
--- GO
+/*
+EXAMPLE: Insert data into tblPerson (Only if the table is empty)
+IF NOT EXISTS (SELECT * FROM dbo.tblPerson)
+BEGIN
+    INSERT INTO dbo.tblPerson (ID, Name, Email, GenderId) 
+    VALUES (1, 'Tom', 'tom@test.com', 1),
+           (2, 'Sara', 'sara@test.com', 2),
+           (3, 'Bob', 'bob@test.com', 1);
+    PRINT 'INFO | Data inserted into dbo.tblPerson.';
+END
+GO
+*/
+
+
+/*
+************************************************************************************
+    list tables in the db, 3 ways to do it
+************************************************************************************
+*/
+SELECT 
+    s.name AS SchemaName,
+    t.name AS TableName,
+    t.create_date
+FROM sys.tables t
+JOIN sys.schemas s ON t.schema_id = s.schema_id
+ORDER BY s.name, t.name;
+GO
+
+SELECT 
+    TABLE_SCHEMA, 
+    TABLE_NAME
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_TYPE = 'BASE TABLE'; -- This excludes Views
+GO
+
+SELECT name, type_desc
+FROM sys.objects
+WHERE type = 'U'
+ORDER BY name;
+GO
+
