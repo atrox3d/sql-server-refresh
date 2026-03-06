@@ -3,17 +3,18 @@ GO
 
 SET NOCOUNT ON;
 GO
--- Q: In real life, would I create a function?
--- A: No. Functions in SQL Server are read-only (mostly).
---    For actions that modify data (INSERT/DELETE), we use STORED PROCEDURES.
 
--- Check if procedure exists to drop it (Standard pattern before CREATE OR ALTER existed)
--- IF OBJECT_ID('dbo.sp_ResetDemoData', 'P') IS NOT NULL
---     DROP PROCEDURE dbo.sp_ResetDemoData;
--- GO
+/*
+************************************************************************************
+    Check if procedure exists to drop it (Standard pattern before CREATE OR ALTER existed)
+    IF OBJECT_ID('dbo.sp_ResetDemoData', 'P') IS NOT NULL
+        DROP PROCEDURE dbo.sp_ResetDemoData;
+    GO
 
--- CREATE OR ALTER is available in newer SQL Server versions (2016+)
--- It handles "Create if new, Alter if exists" automatically.
+    CREATE OR ALTER is available in newer SQL Server versions (2016+)
+    It handles "Create if new, Alter if exists" automatically.
+************************************************************************************
+*/
 CREATE OR ALTER PROCEDURE dbo.sp_ResetDemoData
 AS
 BEGIN
@@ -41,8 +42,8 @@ BEGIN
         (1, 'john',   'j@j.com',      1),
         (2, 'simon',  's@s.com',      2),
         (3, 'rich',   'r@r.com',      1),
-        (4, 'sara',   's@r.com',      3),
-        (5, 'Johnny', 'j@r.com',      3);
+        (4, 'sara',   's@r.com',      1),
+        (5, 'Johnny', 'j@r.com',      1);
 
     PRINT 'INFO | sp_ResetDemoData: Data reset complete.';
 END
