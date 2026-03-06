@@ -1,16 +1,22 @@
 USE [sample];
 GO
-
--- Best Practice: Stop "rows affected" noise
+/*
+    Best Practice: Stop "rows affected" noise
+*/
 SET NOCOUNT ON;
 
 SELECT DB_NAME() AS db_name;
 PRINT 'INFO | Initial Database Context: ' + DB_NAME();
 GO
-
---- prepare data
+/*
+************************************************************************************
+    prepare data
+************************************************************************************
+*/
 DELETE FROM sample.dbo.tblPerson;
-GO
+-- GO
+TRUNCATE TABLE sample.dbo.tblPerson;
+-- GO
 
 INSERT INTO sample.dbo.tblPerson
 VALUES 
@@ -21,23 +27,43 @@ VALUES
     (5, 'may',   'may@may.com',  1),
     (6, 'kerry', 'k@k.com',      3)
 ;
-GO
 
--- make sure rich genderid is null
--- Drop constraint if it exists to ensure deterministic behavior (start fresh)
+SELECT * FROM sample.dbo.tblPerson;
+GO
+/*
+************************************************************************************
+    Drop constraint if it exists to ensure deterministic behavior (start fresh)
+************************************************************************************
+*/
 IF OBJECT_ID('sample.dbo.DF_tblPerson_GenderId', 'D') IS NOT NULL
     BEGIN
         ALTER TABLE sample.dbo.tblPerson DROP CONSTRAINT DF_tblPerson_GenderId;
         PRINT 'INFO | Default constraint DF_tblPerson_GenderId dropped.';
     END
 GO
-
--- skip gender
+/*
+************************************************************************************
+    skip genderid during insert
+    without constraint genderid will be null by default
+************************************************************************************
+*/
 INSERT INTO sample.dbo.tblPerson
 (ID, Name, Email)
 VALUES (7, 'rich',  'r@r.com');             -- genderid is null by default, no default constraint yet
-GO
 
+SELECT 
+        *,
+        'default genderid w/o constraint is NULL' as NOTE
+FROM sample.dbo.tblPerson
+WHERE ID = 7
+;
+GO
+/*
+************************************************************************************
+    create default constraint if it doesnt exist
+    when tblPerson.genderID is not specified the default is 3 (Unknown)
+************************************************************************************
+*/
 IF OBJECT_ID('sample.dbo.DF_tblPerson_GenderId', 'D') IS NULL
     BEGIN
         -- add default constraint for genderid
@@ -52,17 +78,30 @@ ELSE
     END
 GO
 
--- retry and skip gender
+/*
+************************************************************************************
+    skip genderid during insert
+    with constraint genderid will be 3 by default
+************************************************************************************
+*/
 INSERT INTO sample.dbo.tblPerson
 (ID, Name, Email)
 VALUES (8, 'mike',  'mike@r.com');          -- genderid is null by default. default applied
+
+SELECT 
+        *,
+        'default genderid w/ constraint is 3' as NOTE
+FROM sample.dbo.tblPerson
+WHERE ID = 8;
 GO
 
 -- retry add null gender row intentionally
 INSERT INTO sample.dbo.tblPerson
 (ID, Name, Email, GenderId)
 VALUES (9, 'Johnny',  'j@r.com', NULL);     -- genderid is null intentionally, no default applied
-GO
-
-SELECT * FROM sample.dbo.tblPerson;
+SELECT 
+        *,
+        'intentionally set genderID to NULL' as NOTE
+FROM sample.dbo.tblPerson
+WHERE ID = 9;
 GO
