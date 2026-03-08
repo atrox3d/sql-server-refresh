@@ -10,3 +10,6 @@
 # SQL Server tutorials
 [SQL Server tutorial for beginners](https://youtube.com/playlist?list=PL08903FB7ACA1C2FB)
 
+
+# Connection settings when contaniner alreay created
+![Alt Text](connection-settings.png)
