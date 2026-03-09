@@ -13,3 +13,12 @@
 
 # Connection settings when contaniner alreay created
 ![Alt Text](connection-settings.png)
+
+## retrieve forgotten password
+```bash
+# identify container id
+docker ps
+
+# show password
+docker inspect {container_id} | grep -i password
+```
