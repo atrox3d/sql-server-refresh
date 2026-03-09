@@ -119,7 +119,7 @@ cascading referential integrity:
 
 /*
 ************************************************************************************
-    recreate FK with on delete set null
+    recreate FK with on delete set default
 ************************************************************************************
 */
 IF OBJECT_ID('sample.dbo.FK_tblPerson_tblGender', 'F') IS NOT NULL
