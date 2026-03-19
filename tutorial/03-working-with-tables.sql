@@ -88,7 +88,7 @@ ELSE
     END
 GO
 */
-EXEC dbo.sp_create_table_gender;
+EXEC dbo.sp_create_table_gender @DropIfExists=1;
 GO
 
 
@@ -124,7 +124,7 @@ ELSE
         PRINT 'INFO | Table dbo.tblPerson already exists.';
     END
 */
-EXEC dbo.sp_create_table_person;
+EXEC dbo.sp_create_table_person @DropIfExists=1;
 GO
 
 /*

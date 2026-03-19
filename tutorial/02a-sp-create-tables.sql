@@ -2,17 +2,26 @@ use [sample];
 GO
 
 CREATE OR ALTER PROCEDURE dbo.sp_create_table_gender
-    -- @DropIfExists BIT = 0 -- Default to False (0)
+    @DropIfExists BIT = 0 -- Default to False (0)
 AS
 BEGIN
+    DECLARE @FK_NAME VARCHAR(128) = 'dbo.FK_tblPerson_tblGender';
     SET NOCOUNT ON;
 
     -- 1. If 'Force Drop' is requested, kill it first
-    -- IF @DropIfExists = 1 AND OBJECT_ID('dbo.tblPerson', 'U') IS NOT NULL
-    -- BEGIN
-    --     DROP TABLE dbo.tblGender;
-    --     PRINT 'WARN | Table dbo.tblPerson dropped per request.';
-    -- END
+    IF @DropIfExists = 1 AND OBJECT_ID('dbo.tblGender', 'U') IS NOT NULL
+    BEGIN
+        IF OBJECT_ID(@FK_NAME, 'F') IS NOT NULL
+        BEGIN
+            ALTER TABLE [dbo].[tblPerson] 
+            DROP CONSTRAINT [FK_tblPerson_tblGender];
+            PRINT 'INFO | Foreign Key ' + @FK_NAME + ' dropped.';
+        END
+
+
+        DROP TABLE dbo.tblGender;
+        PRINT 'WARN | Table dbo.tblPerson dropped per request.';
+    END
 
     IF OBJECT_ID('dbo.tblGender', 'U') IS NULL
         BEGIN
@@ -30,17 +39,17 @@ END;
 GO
 
 CREATE OR ALTER PROCEDURE dbo.sp_create_table_person
-    -- @DropIfExists BIT = 0 -- Default to False (0)
+    @DropIfExists BIT = 0 -- Default to False (0)
 AS
 BEGIN
     SET NOCOUNT ON;
 
     -- 1. If 'Force Drop' is requested, kill it first
-    -- IF @DropIfExists = 1 AND OBJECT_ID('dbo.tblPerson', 'U') IS NOT NULL
-    -- BEGIN
-    --     DROP TABLE dbo.tblPerson;
-    --     PRINT 'WARN | Table dbo.tblPerson dropped per request.';
-    -- END
+    IF @DropIfExists = 1 AND OBJECT_ID('dbo.tblPerson', 'U') IS NOT NULL
+    BEGIN
+        DROP TABLE dbo.tblPerson;
+        PRINT 'WARN | Table dbo.tblPerson dropped per request.';
+    END
 
     -- 2. Your existing creation logic
     IF OBJECT_ID('dbo.tblPerson', 'U') IS NULL
