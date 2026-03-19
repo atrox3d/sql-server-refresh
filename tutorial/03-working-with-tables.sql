@@ -74,7 +74,6 @@ X 	    EXTENDED_STORED_PROCEDURE
     Best Practice: Create reference tables (Gender) BEFORE dependent tables (Person)
     because person will have a reference to it (03a)
 ************************************************************************************
-*/
 IF OBJECT_ID('dbo.tblGender', 'U') IS NULL
     BEGIN
         CREATE TABLE [dbo].[tblGender] (
@@ -88,6 +87,11 @@ ELSE
         PRINT 'INFO | Table dbo.tblGender already exists.';
     END
 GO
+*/
+EXEC dbo.sp_create_table_gender;
+GO
+
+
 
 /*
 EXAMPLE: Insert data into tblGender (Only if the table is empty)
@@ -105,7 +109,6 @@ GO
 ************************************************************************************
     create table person
 ************************************************************************************
-*/
 IF OBJECT_ID('dbo.tblPerson', 'U') IS NULL
     BEGIN
         CREATE TABLE [dbo].[tblPerson] (
@@ -120,6 +123,8 @@ ELSE
     BEGIN
         PRINT 'INFO | Table dbo.tblPerson already exists.';
     END
+*/
+EXEC dbo.sp_create_table_person;
 GO
 
 /*
