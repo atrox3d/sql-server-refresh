@@ -1,13 +1,6 @@
 use [sample];
 GO
 /*
-    get all available params for OBJECT_ID() function
-*/
-SELECT DISTINCT type, type_desc 
-FROM sys.all_objects  -- 'all_objects' includes system-level definitions
-ORDER BY type;
-GO
-/*
 type    type_desc
 ---     ------------------
 AF      AGGREGATE_FUNCTION
@@ -23,15 +16,25 @@ TF	    SQL_TABLE_VALUED_FUNCTION
 U 	    USER_TABLE
 V 	    VIEW
 X 	    EXTENDED_STORED_PROCEDURE
-*/
-SELECT DISTINCT type, type_desc 
-FROM sys.objects 
-WHERE type IN ('F', 'PK', 'C', 'D')
-ORDER BY type;
-/*
-type	type_desc
----     ------------------
 C 	CHECK_CONSTRAINT
 D 	DEFAULT_CONSTRAINT
 F 	FOREIGN_KEY_CONSTRAINT
 PK	PRIMARY_KEY_CONSTRAINT*/
+
+IF OBJECT_ID('dbo.ObjectTypes', 'U') IS NOT NULL
+    DROP TABLE dbo.ObjectTypes;
+GO
+
+;WITH ObjectTypes AS (
+    SELECT DISTINCT type, type_desc FROM sys.all_objects
+    UNION
+    SELECT DISTINCT type, type_desc FROM sys.objects WHERE type IN ('F', 'PK', 'C', 'D')
+)
+SELECT type, type_desc
+INTO dbo.ObjectTypes
+FROM ObjectTypes
+ORDER BY type;
+GO
+
+select * from dbo.ObjectTypes;
+GO
