@@ -1,3 +1,5 @@
+use [sample];
+GO
 /*
     get all available params for OBJECT_ID() function
 */
@@ -22,3 +24,14 @@ U 	    USER_TABLE
 V 	    VIEW
 X 	    EXTENDED_STORED_PROCEDURE
 */
+SELECT DISTINCT type, type_desc 
+FROM sys.objects 
+WHERE type IN ('F', 'PK', 'C', 'D')
+ORDER BY type;
+/*
+type	type_desc
+---     ------------------
+C 	CHECK_CONSTRAINT
+D 	DEFAULT_CONSTRAINT
+F 	FOREIGN_KEY_CONSTRAINT
+PK	PRIMARY_KEY_CONSTRAINT*/
