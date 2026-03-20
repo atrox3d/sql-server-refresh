@@ -190,8 +190,8 @@ GO
 ************************************************************************************
     examples to retrieve table info
 ************************************************************************************
-*/
 select TOP 1 * from sys.objects;
-Syntax: EXEC sp_help 'Schema.TableName';
+-- Syntax: EXEC sp_help 'Schema.TableName';
 EXEC sp_help 'sys.objects';
 EXEC sp_columns 'sys.objects';
+*/
