@@ -15,7 +15,9 @@ BEGIN
         BEGIN
             ALTER TABLE [dbo].[tblPerson] 
             DROP CONSTRAINT [FK_tblPerson_tblGender];
-            PRINT 'INFO | Foreign Key ' + @FK_NAME + ' dropped.';
+            -- PRINT 'INFO | Foreign Key ' + @FK_NAME + ' dropped.';
+            DECLARE @MSg NVARCHAR(MAX) = CONCAT('INFO | Foreign Key ', @FK_NAME, ' dropped.')
+            EXEC dbo.sp_info @Msg;
         END
 
 
@@ -29,11 +31,11 @@ BEGIN
                 [ID] INT NOT NULL PRIMARY KEY,
                 [Gender] NVARCHAR(50) NOT NULL
             );
-            PRINT 'INFO | Table dbo.tblGender created.';
+            EXEC dbo.sp_info 'INFO | Table dbo.tblGender created.';
         END
     ELSE
         BEGIN
-            PRINT 'INFO | Table dbo.tblGender already exists.';
+            EXEC dbo.sp_info  'INFO | Table dbo.tblGender already exists.';
         END
 END;
 GO
@@ -48,7 +50,7 @@ BEGIN
     IF @DropIfExists = 1 AND OBJECT_ID('dbo.tblPerson', 'U') IS NOT NULL
     BEGIN
         DROP TABLE dbo.tblPerson;
-        PRINT 'WARN | Table dbo.tblPerson dropped per request.';
+        EXEC dbo.sp_info 'WARN | Table dbo.tblPerson dropped per request.';
     END
 
     -- 2. Your existing creation logic
@@ -60,11 +62,11 @@ BEGIN
             [Email] NVARCHAR(50) NOT NULL,
             [GenderId] INT
         );
-        PRINT 'INFO | Table dbo.tblPerson created.';
+        EXEC dbo.sp_info  'INFO | Table dbo.tblPerson created.';
     END
     ELSE
     BEGIN
-        PRINT 'INFO | Table dbo.tblPerson already exists.';
+        EXEC dbo.sp_info 'INFO | Table dbo.tblPerson already exists.';
     END
 END;
 GO

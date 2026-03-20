@@ -10,7 +10,8 @@ go
 
 USE [sample];
 SELECT DB_NAME() AS db_name;
-PRINT 'INFO | Initial Database Context: ' + DB_NAME();
+DECLARE @Msg NVARCHAR(MAX) = 'INFO | Initial Database Context: ' + DB_NAME();
+EXEC dbo.sp_info @Msg;
 GO
 
 /*
