@@ -10,7 +10,8 @@ GO
 SET NOCOUNT ON;
 
 SELECT DB_NAME() AS db_name;
-PRINT 'INFO | Initial Database Context: ' + DB_NAME();
+DECLARE @Msg NVARCHAR(MAX) = 'INFO | Initial Database Context: ' + DB_NAME();
+EXEC dbo.sp_info @Msg;
 GO
 
 /*
@@ -89,7 +90,8 @@ ADD CONSTRAINT [FK_tblPerson_tblGender]     -- name of constraint
 FOREIGN KEY ([GenderId])                    -- foreign key column
 REFERENCES [dbo].[tblGender] ([ID]);        -- external referenced column
 
-SELECT 'INFO | Foreign Key ' + @FK_NAME + ' created.' AS MESSAGE;
+DECLARE @Msg NVARCHAR(MAX) = CONCAT('INFO | Foreign Key ', @FK_NAME, ' created.')
+EXEC dbo.sp_info @Msg;
 GO
 
 /* 
@@ -103,9 +105,9 @@ BEGIN TRY
     VALUES (1, 'name', 'email', 1);
 END TRY
 BEGIN CATCH
-    SELECT 'ERROR | An error occurred. Execution jumped to the CATCH block.' AS MESSAGE
-    UNION ALL
-    SELECT CAST(ERROR_NUMBER() AS NVARCHAR) + ' - ' + ERROR_MESSAGE() AS MESSAGE
+    EXEC dbo.sp_error 'ERROR | An error occurred. Execution jumped to the CATCH block.'
+    -- UNION ALL
+    -- SELECT CAST(ERROR_NUMBER() AS NVARCHAR) + ' - ' + ERROR_MESSAGE() AS MESSAGE
 END CATCH
 GO
 SET NOEXEC ON;  -- stop execution like exit() in python
