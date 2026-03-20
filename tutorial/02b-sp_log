@@ -1,0 +1,61 @@
+use [sample];
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_log
+    @Level NVARCHAR(10),    -- failing to specify size defaults to 1 !!!
+    @Message NVARCHAR(MAX)
+AS
+BEGIN
+    SELECT
+        GETDATE() as [Timestamp],
+        @Level as [Level], 
+        @Message as [Message];
+
+    DECLARE @Msg NVARCHAR(MAX) = FORMATMESSAGE('%s | %s | %s', 
+        CONVERT(NVARCHAR, GETDATE(), 120), -- Style 120 is the "Golden Standard"        UPPER(@Level), 
+        @Message
+    );
+    PRINT @Msg;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_info
+    @Message NVARCHAR(MAX)
+AS
+BEGIN
+    EXEC dbo.sp_log 'INFO', @Message;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_warn
+    @Message NVARCHAR(MAX)
+AS
+BEGIN
+    EXEC dbo.sp_log 'WARN', @Message;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_error
+    @Message NVARCHAR(MAX)
+AS
+BEGIN
+    DECLARE @ErrorMsg NVARCHAR(MAX) = ''
+    IF ERROR_MESSAGE() IS NOT NULL
+        SET @ErrorMsg = FORMATMESSAGE('%s: %i - %s', 
+            @Message, 
+            ERROR_NUMBER(), 
+            ERROR_MESSAGE()
+        );
+    ELSE
+        SET @ErrorMsg = @Message;
+    
+
+    EXEC dbo.sp_log 'ERROR', @ErrorMsg;
+END
+GO
+
+EXEC dbo.sp_log @Level='INFO', @Message='hello'
+EXEC dbo.sp_info @Message='hello'
+EXEC dbo.sp_warn @Message='hello'
+EXEC dbo.sp_error @Message='hello'
+GO
