@@ -73,6 +73,7 @@ X 	    EXTENDED_STORED_PROCEDURE
 ************************************************************************************
     Best Practice: Create reference tables (Gender) BEFORE dependent tables (Person)
     because person will have a reference to it (03a)
+    moved to dbo.sp_create_table_gender
 ************************************************************************************
 IF OBJECT_ID('dbo.tblGender', 'U') IS NULL
     BEGIN
@@ -91,10 +92,10 @@ GO
 EXEC dbo.sp_create_table_gender @DropIfExists=1;
 GO
 
-
-
 /*
+************************************************************************************
 EXAMPLE: Insert data into tblGender (Only if the table is empty)
+************************************************************************************
 IF NOT EXISTS (SELECT * FROM dbo.tblGender)
 BEGIN
     INSERT INTO dbo.tblGender (ID, Gender) 
@@ -108,6 +109,7 @@ GO
 /*
 ************************************************************************************
     create table person
+    moved to dbo.sp_create_table_person
 ************************************************************************************
 IF OBJECT_ID('dbo.tblPerson', 'U') IS NULL
     BEGIN
@@ -128,7 +130,9 @@ EXEC dbo.sp_create_table_person @DropIfExists=1;
 GO
 
 /*
+************************************************************************************
 EXAMPLE: Insert data into tblPerson (Only if the table is empty)
+************************************************************************************
 IF NOT EXISTS (SELECT * FROM dbo.tblPerson)
 BEGIN
     INSERT INTO dbo.tblPerson (ID, Name, Email, GenderId) 
@@ -140,13 +144,15 @@ END
 GO
 */
 
-
 /*
 ************************************************************************************
     list tables in the db, 3 ways to do it
+    use CTEs to define base queries
+    prepend WITH with ; to ensure separation
+    cannot ordet CTEs
 ************************************************************************************
 */
-;WITH sysTables
+;WITH sysTables             -- first CTE
 AS
 (
     SELECT 
@@ -155,10 +161,8 @@ AS
         t.create_date
     FROM sys.tables t
     JOIN sys.schemas s ON t.schema_id = s.schema_id
-    -- ORDER BY s.name, t.name
 ),
-
-schemas
+schemas                     -- second CTE
 AS
 (
     SELECT 
@@ -167,25 +171,27 @@ AS
     FROM INFORMATION_SCHEMA.TABLES
     WHERE TABLE_TYPE = 'BASE TABLE' -- This excludes Views
 ),
-
-objects
+objects                     -- third CTE
 AS
 (
     SELECT name, type_desc
     FROM sys.objects
     WHERE type = 'U'
-    -- ORDER BY name
 )
-
-select *
+select 
+    *
 from sysTables
 inner join schemas on sysTables.TableName = schemas.TABLE_NAME
 inner join objects on sysTables.TableName = objects.name
 order by sysTables.TableName;
 GO
 
-
--- select TOP 1 * from sys.objects;
--- Syntax: EXEC sp_help 'Schema.TableName';
--- EXEC sp_help 'sys.objects';
--- EXEC sp_columns 'sys.objects';
+/*
+************************************************************************************
+    examples to retrieve table info
+************************************************************************************
+*/
+select TOP 1 * from sys.objects;
+Syntax: EXEC sp_help 'Schema.TableName';
+EXEC sp_help 'sys.objects';
+EXEC sp_columns 'sys.objects';
