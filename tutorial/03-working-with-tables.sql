@@ -146,25 +146,46 @@ GO
     list tables in the db, 3 ways to do it
 ************************************************************************************
 */
-SELECT 
-    s.name AS SchemaName,
-    t.name AS TableName,
-    t.create_date
-FROM sys.tables t
-JOIN sys.schemas s ON t.schema_id = s.schema_id
-ORDER BY s.name, t.name;
+;WITH sysTables
+AS
+(
+    SELECT 
+        s.name AS SchemaName,
+        t.name AS TableName,
+        t.create_date
+    FROM sys.tables t
+    JOIN sys.schemas s ON t.schema_id = s.schema_id
+    -- ORDER BY s.name, t.name
+),
+
+schemas
+AS
+(
+    SELECT 
+        TABLE_SCHEMA, 
+        TABLE_NAME
+    FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_TYPE = 'BASE TABLE' -- This excludes Views
+),
+
+objects
+AS
+(
+    SELECT name, type_desc
+    FROM sys.objects
+    WHERE type = 'U'
+    -- ORDER BY name
+)
+
+select *
+from sysTables
+inner join schemas on sysTables.TableName = schemas.TABLE_NAME
+inner join objects on sysTables.TableName = objects.name
+order by sysTables.TableName;
 GO
 
-SELECT 
-    TABLE_SCHEMA, 
-    TABLE_NAME
-FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_TYPE = 'BASE TABLE'; -- This excludes Views
-GO
 
-SELECT name, type_desc
-FROM sys.objects
-WHERE type = 'U'
-ORDER BY name;
-GO
-
+-- select TOP 1 * from sys.objects;
+-- Syntax: EXEC sp_help 'Schema.TableName';
+-- EXEC sp_help 'sys.objects';
+-- EXEC sp_columns 'sys.objects';
