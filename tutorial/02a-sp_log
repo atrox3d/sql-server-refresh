@@ -1,7 +1,7 @@
 use [sample];
 GO
 
-CREATE OR ALTER PROCEDURE dbo.sp_log
+CREATE OR ALTER PROCEDURE dbo.spLog
     @Level NVARCHAR(10),    -- failing to specify size defaults to 1 !!!
     @Message NVARCHAR(MAX)
 AS
@@ -19,23 +19,23 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE dbo.sp_info
+CREATE OR ALTER PROCEDURE dbo.spInfo
     @Message NVARCHAR(MAX)
 AS
 BEGIN
-    EXEC dbo.sp_log 'INFO', @Message;
+    EXEC dbo.spLog 'INFO', @Message;
 END
 GO
 
-CREATE OR ALTER PROCEDURE dbo.sp_warn
+CREATE OR ALTER PROCEDURE dbo.spWarn
     @Message NVARCHAR(MAX)
 AS
 BEGIN
-    EXEC dbo.sp_log 'WARN', @Message;
+    EXEC dbo.spLog 'WARN', @Message;
 END
 GO
 
-CREATE OR ALTER PROCEDURE dbo.sp_error
+CREATE OR ALTER PROCEDURE dbo.spError
     @Message NVARCHAR(MAX)
 AS
 BEGIN
@@ -50,12 +50,12 @@ BEGIN
         SET @ErrorMsg = @Message;
     
 
-    EXEC dbo.sp_log 'ERROR', @ErrorMsg;
+    EXEC dbo.spLog 'ERROR', @ErrorMsg;
 END
 GO
 
-EXEC dbo.sp_log @Level='INFO', @Message='hello'
-EXEC dbo.sp_info @Message='hello'
-EXEC dbo.sp_warn @Message='hello'
-EXEC dbo.sp_error @Message='hello'
+EXEC dbo.spLog @Level='INFO', @Message='hello'
+EXEC dbo.spInfo @Message='hello'
+EXEC dbo.spWarn @Message='hello'
+EXEC dbo.spError @Message='hello'
 GO

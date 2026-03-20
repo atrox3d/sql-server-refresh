@@ -11,7 +11,7 @@ go
 USE [sample];
 SELECT DB_NAME() AS db_name;
 DECLARE @Msg NVARCHAR(MAX) = 'INFO | Initial Database Context: ' + DB_NAME();
-EXEC dbo.sp_info @Msg;
+EXEC dbo.spInfo @Msg;
 GO
 
 /*
@@ -90,7 +90,7 @@ ELSE
     END
 GO
 */
-EXEC dbo.sp_create_table_gender @DropIfExists=1;
+EXEC dbo.spCreate_table_gender @DropIfExists=1;
 GO
 
 /*
@@ -127,7 +127,7 @@ ELSE
         PRINT 'INFO | Table dbo.tblPerson already exists.';
     END
 */
-EXEC dbo.sp_create_table_person @DropIfExists=1;
+EXEC dbo.spCreate_table_person @DropIfExists=1;
 GO
 
 /*
