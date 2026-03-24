@@ -27,3 +27,17 @@ BEGIN
     ALTER DATABASE sample SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
     DROP DATABASE sample;
 END;
+GO
+
+/*
+    --- REFERENCE: RESTORE DATABASE FROM .BAK ---
+    1. Check logical names inside the backup:
+       RESTORE FILELISTONLY FROM DISK = '/path/to/backup.bak';
+
+    2. Restore using those logical names (handling path differences):
+       RESTORE DATABASE [sample] 
+       FROM DISK = '/path/to/backup.bak'
+       WITH MOVE 'sample_Data' TO '/var/opt/mssql/data/sample.mdf',
+            MOVE 'sample_Log'  TO '/var/opt/mssql/data/sample.ldf',
+            REPLACE; -- Overwrites if DB already exists
+*/
