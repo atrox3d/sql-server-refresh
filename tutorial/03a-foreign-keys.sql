@@ -10,7 +10,7 @@ GO
 SET NOCOUNT ON;
 
 SELECT DB_NAME() AS db_name;
-DECLARE @Msg NVARCHAR(MAX) = 'INFO | Initial Database Context: ' + DB_NAME();
+DECLARE @Msg NVARCHAR(MAX) = 'Initial Database Context: ' + DB_NAME();
 EXEC dbo.spInfo @Msg;
 GO
 
@@ -77,14 +77,14 @@ SELECT COALESCE(
 */
 IF OBJECT_ID(@FK_NAME, 'F') IS NOT NULL
 BEGIN
-    SELECT 'INFO | Foreign Key ' + @FK_NAME + ' already exists.' AS MESSAGE
+    SELECT 'Foreign Key ' + @FK_NAME + ' already exists.' AS MESSAGE
     UNION ALL
-    SELECT 'INFO | DROPPING Foreign Key ' + @FK_NAME AS MESSAGE;
+    SELECT 'DROPPING Foreign Key ' + @FK_NAME AS MESSAGE;
     ALTER TABLE [dbo].[tblPerson]
     DROP CONSTRAINT [FK_tblPerson_tblGender];
-    SELECT 'INFO | Foreign Key ' + @FK_NAME + ' dropped.' AS MESSAGE;
+    SELECT 'Foreign Key ' + @FK_NAME + ' dropped.' AS MESSAGE;
 END
-SELECT 'INFO | CREATING Foreign Key ' + @FK_NAME AS MESSAGE;
+SELECT 'CREATING Foreign Key ' + @FK_NAME AS MESSAGE;
 ALTER TABLE [dbo].[tblPerson]               -- object do modify
 ADD CONSTRAINT [FK_tblPerson_tblGender]     -- name of constraint
 FOREIGN KEY ([GenderId])                    -- foreign key column
@@ -105,7 +105,7 @@ BEGIN TRY
     VALUES (1, 'name', 'email', 1);
 END TRY
 BEGIN CATCH
-    EXEC dbo.spError 'ERROR | An error occurred. Execution jumped to the CATCH block.'
+    EXEC dbo.spError 'An error occurred. Execution jumped to the CATCH block.'
     -- UNION ALL
     -- SELECT CAST(ERROR_NUMBER() AS NVARCHAR) + ' - ' + ERROR_MESSAGE() AS MESSAGE
 END CATCH

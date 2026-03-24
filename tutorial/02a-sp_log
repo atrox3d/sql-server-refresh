@@ -40,6 +40,7 @@ CREATE OR ALTER PROCEDURE dbo.spError
 AS
 BEGIN
     DECLARE @ErrorMsg NVARCHAR(MAX) = ''
+    -- SELECT ERROR_NUMBER(), ERROR_MESSAGE();
     IF ERROR_MESSAGE() IS NOT NULL
         SET @ErrorMsg = FORMATMESSAGE('%s: %i - %s', 
             @Message, 
