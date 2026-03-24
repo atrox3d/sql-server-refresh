@@ -33,7 +33,7 @@ SELECT value FROM STRING_SPLIT('mark susan john', ' ');
 
 PRINT 'INFO | Using a CTE (Common Table Expression) - another type of "Virtual Table"...';
 -- CTE: Common table expression
-WITH MyVirtualTable AS (
+;WITH MyVirtualTable AS (
     -- This defines a temporary named result set (Virtual Table)
     SELECT value, LEN(value) as NameLength      -- returns (value, NameLength)
     FROM STRING_SPLIT('alice bob charlie', ' ') -- returns a virtual table with the column 'value'

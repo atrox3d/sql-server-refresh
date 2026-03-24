@@ -1,3 +1,4 @@
+SET NOEXEC OFF;
 USE [sample];
 GO
 
@@ -7,8 +8,10 @@ GO
 SET NOCOUNT ON;
 
 SELECT DB_NAME() AS db_name;
-PRINT 'INFO | Initial Database Context: ' + DB_NAME();
+DECLARE @msg VARCHAR(MAX) = 'Initial Database Context: ' + DB_NAME();
+EXEC dbo.spInfo @msg
 GO
+-- SET NOEXEC ON;
 
 /*
 ************************************************************************************
@@ -22,11 +25,11 @@ IF NOT EXISTS (SELECT * FROM dbo.tblGender)         -- check fo emptiness
             (1, 'Male'), 
             (2, 'Female'), 
             (3, 'Unknown');
-        PRINT 'INFO | Data inserted into dbo.tblGender.';
+        EXEC dbo.spInfo 'INFO | Data inserted into dbo.tblGender.';
     END
 ELSE
     BEGIN
-        PRINT 'INFO | Data already inserted into dbo.tblGender.';
+        EXEC dbo.spInfo 'Data already inserted into dbo.tblGender.';
     END
 GO
 
@@ -56,6 +59,7 @@ GO
 INSERT INTO sample.dbo.tblPerson
 (ID, Name, Email)                       -- need to specify columns due to missing gender value
 VALUES (1, 'john', 'j@j.com');          -- no gender
+SELECT *  FROM sample.dbo.tblPerson;
 GO
 
 /*
@@ -63,14 +67,21 @@ GO
     illegal gender values are not allowed, fk violation
 ************************************************************************************
 */
-INSERT INTO sample.dbo.tblPerson
--- (ID, Name, Email)
-VALUES (2, 'mary', 'm@m.com', 99);      -- illegal gender
+BEGIN TRY
+    INSERT INTO sample.dbo.tblPerson
+    -- (ID, Name, Email)
+    VALUES (2, 'mary', 'm@m.com', 99);      -- illegal gender
+END TRY
+BEGIN CATCH
+    -- SELECT ERROR_NUMBER(), ERROR_MESSAGE();
+    EXEC dbo.spError 'An error occurred. Execution jumped to the CATCH block.'
+END CATCH
 /*
     The INSERT statement conflicted with the FOREIGN KEY constraint "FK_tblPerson_tblGender". 
     The conflict occurred in database "sample", table "dbo.tblGender", column 'ID'.
 */
 GO
+-- SET NOEXEC ON;
 
 INSERT INTO sample.dbo.tblPerson
 VALUES (2, 'mary', 'm@m.com', 2);      -- correct gender
