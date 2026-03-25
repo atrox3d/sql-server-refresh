@@ -11,8 +11,15 @@ BEGIN
         @Level as [Level], 
         @Message as [Message];
 
+    DECLARE @Date NVARCHAR(20) = CONVERT(NVARCHAR, GETDATE(), 120);
+    SET @Level = UPPER(@Level);
+    PRINT '@Date: ' + @Date;
+    PRINT '@Level: ' + @Level;
     DECLARE @Msg NVARCHAR(MAX) = FORMATMESSAGE('%s | %s | %s', 
-        CONVERT(NVARCHAR, GETDATE(), 120), -- Style 120 is the "Golden Standard"        UPPER(@Level), 
+        -- CONVERT(NVARCHAR, GETDATE(), 120), -- Style 120 is the "Golden Standard" 
+        -- UPPER(@Level), 
+        @Date,
+        @Level,
         @Message
     );
     PRINT @Msg;
