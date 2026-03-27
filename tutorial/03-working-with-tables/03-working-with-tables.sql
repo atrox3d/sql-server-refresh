@@ -11,7 +11,7 @@ go
 USE [sample];
 SELECT DB_NAME() AS db_name;
 DECLARE @Msg NVARCHAR(MAX) = 'INFO | Initial Database Context: ' + DB_NAME();
-EXEC dbo.spInfo @Msg;
+EXEC dbo.spInfo @Msg, 1;
 GO
 
 /*
