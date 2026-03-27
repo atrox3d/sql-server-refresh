@@ -116,31 +116,34 @@ END
 GO
 
 
-EXEC dbo.spLog 'INFO', 'hello';
-EXEC dbo.spLog 'INFO', 'hi', 1;
-GO
+-- EXEC dbo.spLog 'INFO', 'hello';
+-- EXEC dbo.spLog 'INFO', 'hi', 1;
+-- GO
 -- # ## add info, warning, error helpers
 
 CREATE OR ALTER PROCEDURE dbo.spInfo
-    @Message NVARCHAR(MAX)
+    @Message NVARCHAR(MAX),
+    @Flush BIT = 0
 AS
 BEGIN
-    EXEC dbo.spLog 'INFO', @Message;
+    EXEC dbo.spLog 'INFO', @Message, @Flush;
 END
 GO
 
 
 CREATE OR ALTER PROCEDURE dbo.spWarn
-    @Message NVARCHAR(MAX)
+    @Message NVARCHAR(MAX),
+    @Flush BIT = 0
 AS
 BEGIN
-    EXEC dbo.spLog 'WARN', @Message;
+    EXEC dbo.spLog 'WARN', @Message, @Flush;
 END
 GO
 
 
 CREATE OR ALTER PROCEDURE dbo.spError
-    @Message NVARCHAR(MAX)
+    @Message NVARCHAR(MAX),
+    @Flush BIT = 0
 AS
 BEGIN
     DECLARE @ErrorMsg NVARCHAR(MAX) = ''
@@ -155,7 +158,7 @@ BEGIN
         SET @ErrorMsg = @Message;
     
 
-    EXEC dbo.spLog 'ERROR', @ErrorMsg;
+    EXEC dbo.spLog 'ERROR', @ErrorMsg, @Flush;
 END
 GO
 
@@ -165,12 +168,13 @@ GO
 SELECT DB_NAME() AS db_name;
 GO
 
-PRINT 'start'
-EXEC dbo.spLog @Level='INFO', @Message='hello'
-EXEC dbo.spInfo @Message='hello'
-EXEC dbo.spWarn @Message='hello'
-EXEC dbo.spError @Message='hello'
-PRINT 'end'
+PRINT 'start';
+EXEC dbo.spLog @Level='INFO', @Message='hello';
+EXEC dbo.spInfo @Message='hello';
+EXEC dbo.spWarn @Message='hello';
+EXEC dbo.spError @Message='hello';
+EXEC dbo.spFLush;
+PRINT 'end';
 GO
 
 
