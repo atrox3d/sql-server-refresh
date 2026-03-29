@@ -146,19 +146,16 @@ CREATE OR ALTER PROCEDURE dbo.spError
     @Flush BIT = 0
 AS
 BEGIN
+    EXEC dbo.spLog 'ERROR', @Message, @Flush;
     DECLARE @ErrorMsg NVARCHAR(MAX) = ''
     -- SELECT ERROR_NUMBER(), ERROR_MESSAGE();
     IF ERROR_MESSAGE() IS NOT NULL
-        SET @ErrorMsg = FORMATMESSAGE('%s: %i - %s', 
-            @Message, 
-            ERROR_NUMBER(), 
-            ERROR_MESSAGE()
-        );
-    ELSE
-        SET @ErrorMsg = @Message;
-    
-
-    EXEC dbo.spLog 'ERROR', @ErrorMsg, @Flush;
+    BEGIN
+        SET @ErrorMsg = FORMATMESSAGE('ERROR_NUMBER: %i', ERROR_NUMBER());
+        EXEC dbo.spLog 'ERROR', @ErrorMsg, @Flush;
+        SET @ErrorMsg = FORMATMESSAGE('ERROR_MESSAGE: %s', ERROR_MESSAGE());
+        EXEC dbo.spLog 'ERROR', @ErrorMsg, @Flush;
+    END
 END
 GO
 

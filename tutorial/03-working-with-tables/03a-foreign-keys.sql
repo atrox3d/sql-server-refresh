@@ -27,13 +27,13 @@ DECLARE @FK_NAME VARCHAR(128) = 'dbo.FK_tblPerson_tblGender';
 AS
 (
     SELECT COALESCE(
-                /* 
-                    object_id return an integer, 
-                    so coalesce must use an integer too !!!
-                */
-                OBJECT_ID(@FK_NAME, 'F'),               -- if the foreign key does not exist returns null
-                0                                       -- if object_id returns null, returns 0
-            ) AS FK_ID
+            /* 
+                object_id return an integer, 
+                so coalesce must use an integer too !!!
+            */
+            OBJECT_ID(@FK_NAME, 'F'),               -- if the foreign key does not exist returns null
+            0                                       -- if object_id returns null, returns 0
+        ) AS FK_ID
 )
 SELECT 
     FK_ID,
@@ -77,20 +77,23 @@ SELECT COALESCE(
 */
 IF OBJECT_ID(@FK_NAME, 'F') IS NOT NULL
 BEGIN
-    SELECT 'Foreign Key ' + @FK_NAME + ' already exists.' AS MESSAGE
-    UNION ALL
-    SELECT 'DROPPING Foreign Key ' + @FK_NAME AS MESSAGE;
+    DECLARE @msg NVARCHAR(MAX) = 'Foreign Key ' + @FK_NAME + ' already exists.'
+    EXEC dbo.spInfo @msg;
+    SET @msg ='DROPPING Foreign Key ' + @FK_NAME;
+    EXEC dbo.spInfo @msg;
     ALTER TABLE [dbo].[tblPerson]
-    DROP CONSTRAINT [FK_tblPerson_tblGender];
-    SELECT 'Foreign Key ' + @FK_NAME + ' dropped.' AS MESSAGE;
+        DROP CONSTRAINT [FK_tblPerson_tblGender];
+    SET @msg = 'Foreign Key ' + @FK_NAME + ' dropped.';
+    EXEC dbo.spInfo @msg;
 END
-SELECT 'CREATING Foreign Key ' + @FK_NAME AS MESSAGE;
+
+SET @msg = 'CREATING Foreign Key ' + @FK_NAME;
+EXEC dbo.spInfo @msg;
 ALTER TABLE [dbo].[tblPerson]               -- object do modify
 ADD CONSTRAINT [FK_tblPerson_tblGender]     -- name of constraint
 FOREIGN KEY ([GenderId])                    -- foreign key column
 REFERENCES [dbo].[tblGender] ([ID]);        -- external referenced column
-
-DECLARE @Msg NVARCHAR(MAX) = CONCAT('INFO | Foreign Key ', @FK_NAME, ' created.')
+SET @Msg = CONCAT('Foreign Key ', @FK_NAME, ' created.')
 EXEC dbo.spInfo @Msg;
 GO
 
@@ -106,8 +109,9 @@ BEGIN TRY
 END TRY
 BEGIN CATCH
     EXEC dbo.spError 'An error occurred. Execution jumped to the CATCH block.'
-    -- UNION ALL
-    -- SELECT CAST(ERROR_NUMBER() AS NVARCHAR) + ' - ' + ERROR_MESSAGE() AS MESSAGE
+    -- EXEC dbo.spInfo @msg;
+    -- DECLARE @Msg NVARCHAR(MAX) =CAST(ERROR_NUMBER() AS NVARCHAR) + ' - ' + ERROR_MESSAGE(E
 END CATCH
+EXEC dbo.spFLush;
 GO
 SET NOEXEC ON;  -- stop execution like exit() in python
