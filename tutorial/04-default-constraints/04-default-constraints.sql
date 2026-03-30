@@ -6,18 +6,23 @@ GO
 SET NOCOUNT ON;
 
 SELECT DB_NAME() AS db_name;
-PRINT 'INFO | Initial Database Context: ' + DB_NAME();
+DECLARE @msg VARCHAR(MAX) = 'Initial Database Context: ' + DB_NAME();
+EXEC dbo.spInfo @msg, 1;
 GO
 /*
 ************************************************************************************
     prepare data
 ************************************************************************************
 */
+EXEC dbo.spInfo 'DELETE FROM sample.dbo.tblPerson;';
 DELETE FROM sample.dbo.tblPerson;
 -- GO
+EXEC dbo.spInfo 'TRUNCATE TABLE sample.dbo.tblPerson;';
 TRUNCATE TABLE sample.dbo.tblPerson;
+EXEC dbo.spFLush;
 -- GO
 
+EXEC dbo.spInfo 'INSERT INTO sample.dbo.tblPerson;', 1;
 INSERT INTO sample.dbo.tblPerson
 VALUES 
     (1, 'john',  'j@j.com',      1),
@@ -38,7 +43,7 @@ GO
 IF OBJECT_ID('sample.dbo.DF_tblPerson_GenderId', 'D') IS NOT NULL
     BEGIN
         ALTER TABLE sample.dbo.tblPerson DROP CONSTRAINT DF_tblPerson_GenderId;
-        PRINT 'INFO | Default constraint DF_tblPerson_GenderId dropped.';
+        EXEC dbo.spInfo 'Default constraint DF_tblPerson_GenderId dropped.', 1;
     END
 GO
 /*

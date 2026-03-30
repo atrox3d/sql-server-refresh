@@ -9,7 +9,7 @@ SET NOCOUNT ON;
 
 SELECT DB_NAME() AS db_name;
 DECLARE @msg VARCHAR(MAX) = 'Initial Database Context: ' + DB_NAME();
-EXEC dbo.spInfo @msg
+EXEC dbo.spInfo @msg, 1;
 GO
 -- SET NOEXEC ON;
 
@@ -73,13 +73,12 @@ BEGIN TRY
     VALUES (2, 'mary', 'm@m.com', 99);      -- illegal gender
 END TRY
 BEGIN CATCH
-    -- SELECT ERROR_NUMBER(), ERROR_MESSAGE();
+    /*
+        The INSERT statement conflicted with the FOREIGN KEY constraint "FK_tblPerson_tblGender". 
+        The conflict occurred in database "sample", table "dbo.tblGender", column 'ID'.
+    */
     EXEC dbo.spError 'An error occurred. Execution jumped to the CATCH block.'
 END CATCH
-/*
-    The INSERT statement conflicted with the FOREIGN KEY constraint "FK_tblPerson_tblGender". 
-    The conflict occurred in database "sample", table "dbo.tblGender", column 'ID'.
-*/
 GO
 -- SET NOEXEC ON;
 
@@ -101,4 +100,5 @@ SELECT
     END AS GenderStatus
 FROM 
     sample.dbo.tblPerson;
+EXEC dbo.spFLush;
 GO
