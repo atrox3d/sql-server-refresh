@@ -3,18 +3,19 @@
 
     vscode extension: ms-mssql.mssql
 
-## other resources for ARM/MacOS
+## Other resources for ARM/MacOS
 [Development with SQL in containers on macOS](https://devblogs.microsoft.com/azure-sql/development-with-sql-in-containers-on-macos/)
 
 
-# SQL Server tutorials
-[SQL Server tutorial for beginners](https://youtube.com/playlist?list=PL08903FB7ACA1C2FB)
+## Connection settings when contaniner alreay created
 
+Server name can point to another machine,
 
-# Connection settings when contaniner alreay created
+eg: 102.168.1.10,1433
+
 ![Alt Text](connection-settings.png)
 
-## retrieve forgotten password
+## Retrieve forgotten password
 ```bash
 # identify container id
 docker ps
@@ -22,3 +23,19 @@ docker ps
 # show password
 docker inspect {container_id} | grep -i password
 ```
+---
+<br>
+<br>
+
+# Tutorials/Channels/Resources
+
+
+- Tutorial: [SQL Server tutorial for beginners](https://youtube.com/playlist?list=PL08903FB7ACA1C2FB)
+
+- Channel: [The Code Samples](https://www.youtube.com/@thecodesamples)
+- Channel: [Absent Data](https://www.youtube.com/@absentdata)
+- Channel: [Database Star](https://www.youtube.com/@DatabaseStar)
+
+
+
+
