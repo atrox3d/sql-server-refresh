@@ -1,0 +1,15 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql_dev
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourStrong@Password123
+    volumes:
+      # Persists your database data locally so it survives container restarts
+      - ./mssql_data:/var/opt/mssql
+      # Maps your project folder to /container_data for BULK INSERT access
+      - .:/container_data
+    user: root
