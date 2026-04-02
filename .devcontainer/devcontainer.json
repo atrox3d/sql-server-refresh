@@ -1,0 +1,46 @@
+{
+  // "name": "Python 3 Project (uv)",
+  // Use a standard Python image that includes pipx
+  // "image": "mcr.microsoft.com/devcontainers/python:3.11",
+	"name": "mssql-devcontainer",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	// "image": "mcr.microsoft.com/devcontainers/base:jammy"
+
+	// "build": {
+	// 	"dockerfile": "Dockerfile"
+	// }
+
+	"dockerComposeFile": "docker-compose.yaml",
+	"service": "sqlserver",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [9092, 29092],
+	"forwardPorts": [],
+
+  // Run commands after the container is created to set up the environment with uv
+  // install uv, create .venv if not exist, activate it, sync packages and activate it
+  // "postCreateCommand": "pipx install uv && uv venv --allow-existing && uv sync && . .venv/bin/activate",
+  "postCreateCommand": ".devcontainer/on-create.sh",
+  // "postCreateCommand": "apt-get update && apt-get install -y postgresql-client",
+
+    // Configure VS Code settings and extensions for the container
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // Tell VS Code to use the Python interpreter from the venv we just created
+        "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+        "python.terminal.activateEnvironment": true
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "google.geminicodeassist",
+        "ms-mssql.mssql"
+      ]
+    }
+  }
+}

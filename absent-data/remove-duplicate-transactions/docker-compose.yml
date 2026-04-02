@@ -11,5 +11,5 @@ services:
       # Persists your database data locally so it survives container restarts
       - ./mssql_data:/var/opt/mssql
       # Maps your project folder to /container_data for BULK INSERT access
-      - .:/container_data
+      - ../container_data:/container_data
     user: root
