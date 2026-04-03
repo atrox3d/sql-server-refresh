@@ -19,17 +19,22 @@ CRED_DEST_FILE="${CRED_DEST_DIR}/oauth_creds.json"
 echo "checking for ${CRED_SOURCE_FILE}..."
 if [ -f "$CRED_SOURCE_FILE" ]; then
     echo "Restoring Gemini credentials..."
+	echo "Creating credential dest dir ${CRED_DEST_DIT}..."
     mkdir -p "$CRED_DEST_DIR"
-    cp "$CRED_SOURCE_FILE" "$CRED_DEST_FILE"
+    echo "copying ${CRED_SOURCE_FILE} to ${CRED_DEST_FILE}..."
+	cp "$CRED_SOURCE_FILE" "$CRED_DEST_FILE"
     # Ensure the 'vscode' user owns the restored files, not root
-    chown -R vscode:vscode "${HOME}/.gemini"
+	echo "chowing -R ${CRED_DESGT_DIR}"
+    chown -R vscode:vscode "${CRED_DEST_DIR}"
+	echo "Showing ${CRED_DEST_DIR}..."
+	ls -la "${CRED_DEST_DIR}"
     echo "Credentials restored and permissions set."
 else
     echo "ERROR | cannot find ${CRED_SOURCE_FILE}. cannot login into gemini"
 fi
 
 
-ALIASES_PATH="${CONTAINER_PROJECT_PATH}/.aliases"
+ALIASES_PATH="${CONTAINER_PROJECT_PATH}/.devcontainer/.aliases"
 BASHRC_PATH="${HOME}/.bashrc"
 echo "checking for ${ALIASES_PATH}..."
 if [ -f "${ALIASES_PATH}" ]

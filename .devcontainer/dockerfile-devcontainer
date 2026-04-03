@@ -1,0 +1,10 @@
+# FROM python:3.8-slim
+FROM mcr.microsoft.com/devcontainers/python:3.11
+
+RUN apt-get update && apt-get install -y postgresql-client
+
+# COPY .secrets/.pgpass /home/vscode
+# RUN chmod 600 /home/vscode/.pgpass && chown vscode:vscode /home/vscode/.pgpass
+# COPY elt.py .
+
+# CMD [ "python", "elt.py" ]

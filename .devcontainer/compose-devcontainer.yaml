@@ -1,0 +1,13 @@
+services:
+  devcontainer:
+    # image: mcr.microsoft.com/devcontainers/python:3.11  # python image
+    build:
+      context: .
+      dockerfile: dockerfile-devcontainer
+    volumes:
+      - ../..:/workspaces:cached                        # maps prj folder to container
+    env_file:
+      - .env
+    command: sleep infinity                             # keeps only the devcontainer up
+    depends_on:
+      - sqlserver                                           # waits for kafka who waits for zookeper
