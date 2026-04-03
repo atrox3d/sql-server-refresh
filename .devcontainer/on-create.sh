@@ -45,3 +45,14 @@ then
 else
     echo "ERROR | cannot find ${ALIASES_PATH}, cannot souurce aliases"
 fi
+
+# 1. Install uv if not present
+if ! command -v uv &> /dev/null; then
+    echo "1. Installing uv via pipx..."
+    pipx install uv
+fi
+
+# 2. Sync the environment
+echo "2. Syncing Python environment with uv..."
+# This will look for a pyproject.toml in your workspace
+uv sync
