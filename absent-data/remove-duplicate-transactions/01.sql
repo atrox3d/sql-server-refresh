@@ -5,6 +5,41 @@
 
 **************************************************************
 */
+IF DB_ID('absentdata') IS NOT NULL      -- check for db existence
+BEGIN
+    BEGIN TRY
+        -- Forcefully disconnect any other users
+        -- ALTER DATABASE absentdata SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+        DROP DATABASE absentdata;
+        PRINT 'INFO | Database sample dropped.';
+    END TRY
+    BEGIN CATCH
+        -- show error if db cannot be deleted
+        SELECT 
+            ERROR_NUMBER() AS ErrorNumber,
+            ERROR_MESSAGE() AS ErrorMessage;
+        -- Re-throw the error to trigger the exit
+        THROW;
+    END CATCH
+END
+GO
+
+CREATE DATABASE absentdata;
+PRINT 'INFO | Database absentdata created.';
+GO
+
+-- make sure its set to multi user
+-- ALTER DATABASE alterdata SET MULTI_USER;
+-- GO
+
+-- check if there is a db 'absentdata'
+SELECT name, database_id, create_date
+FROM sys.databases
+WHERE name = 'absentdata';
+GO
+
+use absentdata;
+go
 
 -- 1. Create the destination table
 -- Adjust the columns and data types based on the specific CSV structure
