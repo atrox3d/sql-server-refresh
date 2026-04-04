@@ -37,7 +37,11 @@ ALTER DATABASE absentdata SET MULTI_USER;
 GO
 
 -- check if there is a db 'absentdata'
-SELECT name, database_id, create_date
+SELECT 
+    name, 
+    database_id, 
+    create_date,
+    'created' as status
 FROM sys.databases
 WHERE name = 'absentdata';
 GO
@@ -66,6 +70,8 @@ CREATE TABLE dbo.SalesRaw (
 );
 GO
 
+exec sp_help 'SalesRaw';
+GO
 -- 2. Bulk Insert the data
 -- Note: The path must be accessible by the SQL Server Service Account.
 BULK INSERT dbo.SalesRaw
@@ -81,5 +87,8 @@ WITH (
 GO
 
 -- 3. Verify the import
-SELECT COUNT(*) AS TotalRowsLoaded FROM dbo.SalesRaw;
+SELECT
+    '/container_data/absent-data/sales_raw.csv' as SOURCE,
+    COUNT(*) AS TotalRowsLoaded 
+FROM dbo.SalesRaw;
 SELECT TOP 10 * FROM dbo.SalesRaw;
