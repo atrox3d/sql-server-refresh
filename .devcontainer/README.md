@@ -17,4 +17,19 @@
 |compose-sqlserver.yaml | mssql_dev service definition | yes |
 |on-create.sh | postCreateCommand script referenced in devcontainer.json | yes |
 
+## dependency hierarchy
 
+```text
+devcontainer.json
+├── docker-compose.yaml/
+│   │
+│   ├── compose-devcontainer.yaml/
+│   │   │
+│   │   └── dockerfile-devcontainer
+│   │
+│   └── compose-sqlserver.yaml/
+│       │
+│       └── .env
+│
+└── on-create.sh
+```
