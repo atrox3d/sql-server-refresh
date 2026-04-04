@@ -8,8 +8,9 @@
 IF DB_ID('absentdata') IS NOT NULL      -- check for db existence
 BEGIN
     BEGIN TRY
+        USE master;
         -- Forcefully disconnect any other users
-        -- ALTER DATABASE absentdata SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+        ALTER DATABASE absentdata SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
         DROP DATABASE absentdata;
         PRINT 'INFO | Database sample dropped.';
     END TRY
@@ -28,9 +29,12 @@ CREATE DATABASE absentdata;
 PRINT 'INFO | Database absentdata created.';
 GO
 
+USE absentdata;
+GO
+
 -- make sure its set to multi user
--- ALTER DATABASE alterdata SET MULTI_USER;
--- GO
+ALTER DATABASE absentdata SET MULTI_USER;
+GO
 
 -- check if there is a db 'absentdata'
 SELECT name, database_id, create_date
@@ -65,7 +69,7 @@ GO
 -- 2. Bulk Insert the data
 -- Note: The path must be accessible by the SQL Server Service Account.
 BULK INSERT dbo.SalesRaw
-FROM '/container_data/sales_raw.csv'
+FROM '/container_data/absent-data/sales_raw.csv'
 WITH (
     FORMAT = 'CSV',
     FIRSTROW = 2,        -- Skip the header row
