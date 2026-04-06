@@ -3,12 +3,15 @@ set -e
 
 # This script is executed as root by default.
 
-
-
 CONTAINER_PROJECT_PATH="${PWD}"
 LOGFILE="${CONTAINER_PROJECT_PATH}"/on-create.log
 echo "Executing post-creation script..."
-
+########################################################
+# RESTORE GEMINI CREDENTIALS
+# updated new gemini credential system
+# it now uses the following folders:
+# - ~/.cache/google-vscode-extension
+########################################################
 {
     echo "########################################################"
     echo "# 1. Restore Gemini credentials if they exist"
@@ -23,7 +26,7 @@ echo "Executing post-creation script..."
     if [ -d $CRED_SOURCE_DIR ]; then
         echo "Restoring Gemini credentials..."
         shopt -s dotglob  # Turn it on
-        cp -r "${CRED_SOURCE_DIR}"/* "${CRED_DEST_DIR}"
+        cp -rf "${CRED_SOURCE_DIR}"/* "${CRED_DEST_DIR}"
         shopt -u dotglob  # Turn it off (good practice)
         echo "Credentials restored and permissions set."
     else
