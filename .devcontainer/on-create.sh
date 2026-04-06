@@ -13,31 +13,33 @@ echo "Executing post-creation script..."
 
 # 1. Restore Gemini credentials if they exist
 {
-    CRED_SOURCE_DIR="${CONTAINER_PROJECT_PATH}/.devcontainer/.persisted-credentials"
-    CRED_SOURCE_FILE="${CRED_SOURCE_DIR}/"*.json
-    CRED_DEST_DIR="${HOME}/.gemini"
-    CRED_DEST_FILE="${CRED_DEST_DIR}/"*.json
+    # CRED_SOURCE_DIR="${CONTAINER_PROJECT_PATH}/.devcontainer/.persisted-credentials"
+    CRED_SOURCE_DIR="${CONTAINER_PROJECT_PATH}/.devcontainer/.gemini"
+    # CRED_SOURCE_FILE="${CRED_SOURCE_DIR}/"*.json
+    CRED_DEST_DIR="${HOME}"
+    CRED_DEST_PATH="${HOME}/.gemini"
+    # CRED_DEST_FILE="${CRED_DEST_DIR}/"*.json
 
-    echo -e "checking for: \n${CRED_SOURCE_FILE}\n..."
-    # if [ -f $CRED_SOURCE_FILE ]; then
-    if ls ${CRED_SOURCE_FILE} >/dev/null 2>&1; then
+    echo -e "checking for: \n${CRED_SOURCE_DIR}\n..."
+    if [ -d $CRED_SOURCE_DIR ]; then
+    # if ls ${CRED_SOURCE_FILE} >/dev/null 2>&1; then
         # echo "Files exist"
         echo "Restoring Gemini credentials..."
         echo "Creating credential dest dir ${CRED_DEST_DIT}..."
-        mkdir -p "$CRED_DEST_DIR"
-        echo "copying ${CRED_SOURCE_FILE} to ${CRED_DEST_FILE}..."
-        cp ${CRED_SOURCE_FILE} "${CRED_DEST_DIR}"
+        # mkdir -p "$CRED_DEST_DIR"
+        echo "copying ${CRED_SOURCE_DIR} to ${CRED_DEST_DIR}..."
+        cp -r ${CRED_SOURCE_DIR} "${CRED_DEST_DIR}"
         # Ensure the 'vscode' user owns the restored files, not root
-        echo "chowing -R ${CRED_DESGT_DIR}"
+        echo "chowing -R ${CRED_DEST_DIR}"
         chown -R vscode:vscode "${CRED_DEST_DIR}"
         echo "Showing ${CRED_DEST_DIR}..."
-        ls -la "${CRED_DEST_DIR}"
+        ls -la "${CRED_DEST_PATH}"
         echo "Credentials restored and permissions set."
     else
         echo -e "ERROR | cannot find \n${CRED_SOURCE_FILE}\n cannot login into gemini"
         read -p "press ENTER"
     fi
-} 2>&1 | tee -a "${LOGFILE}"
+} 2>&1 | tee "${LOGFILE}"
 
 ALIASES_PATH="${CONTAINER_PROJECT_PATH}/.devcontainer/.aliases"
 BASHRC_PATH="${HOME}/.bashrc"
