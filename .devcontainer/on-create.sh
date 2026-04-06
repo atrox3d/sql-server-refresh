@@ -7,9 +7,10 @@ CONTAINER_PROJECT_PATH="${PWD}"
 LOGFILE="${CONTAINER_PROJECT_PATH}"/on-create.log
 echo "Executing post-creation script..."
 ########################################################
-# RESTORE GEMINI CREDENTIALS
+# 1. RESTORE GEMINI CREDENTIALS
 # updated new gemini credential system
 # it now uses the following folders:
+# - ~/.gemini
 # - ~/.cache/google-vscode-extension
 ########################################################
 {
@@ -38,6 +39,9 @@ echo "Executing post-creation script..."
     fi
 } 2>&1 | tee "${LOGFILE}"
 
+########################################################
+# 2. RESTORE .aliases
+########################################################
 echo "########################################################"
 echo "# 2. Restore aliases"
 echo "########################################################"
@@ -55,6 +59,9 @@ else
     echo "***********************************************************************"
 fi
 
+########################################################
+# 3. UV
+########################################################
 echo "########################################################"
 echo "# 3. Install uv if not present"
 echo "########################################################"
