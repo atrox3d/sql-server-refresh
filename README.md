@@ -13,7 +13,10 @@
 
 # Docker/Devcontainer Setup
 
-- [Default mssql extension container](./.devcontainer/README-default-docker.md)
-- [Custom devcontainer](./.devcontainer/README-custom-devcontainer.md)
+- basic ephemeral mssql container provided by the extension itself [Default mssql extension container](./.devcontainer/README-default-docker.md)
+no I/O possible, nopersistence guaranteed
+<br/>
+
+- to enable csv import and map local FS to docker container its is possible to create a [Custom devcontainer](./.devcontainer/README-custom-devcontainer.md)
 
 
