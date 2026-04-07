@@ -20,3 +20,27 @@ no I/O possible, nopersistence guaranteed
 - to enable csv import and map local FS to docker container its is possible to create a [Custom devcontainer](./.devcontainer/README-custom-devcontainer.md)
 
 
+## Workspace structure
+
+```text
+.devcontainer
+├── .home/
+│   │
+│   ├── .cache/
+│   │   │
+│   │   └── google-vscode-exension
+│   │
+│   └── .gemini/
+│
+├── .msssql_data/
+│
+├── 0-data/
+│   │
+│   ├── ${tutorial-name}/
+│   ...
+│
+└── ${tutorial-name}
+│
+└── ...
+```
+
