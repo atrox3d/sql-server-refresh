@@ -136,6 +136,10 @@ GO
 /*
 ************************************************************************************
     demonstrate id seed reset to 1
+    - delete all records
+    - when inserting new record id value continue from the last
+    - reset the seed
+    - when inserting new record id value start from 1
 ************************************************************************************
 */
 -- delete all rows
