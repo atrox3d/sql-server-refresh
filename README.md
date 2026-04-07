@@ -24,6 +24,7 @@ no I/O possible, nopersistence guaranteed
 
 ```text
 .devcontainer
+│
 ├── .home/
 │   │
 │   ├── .cache/
