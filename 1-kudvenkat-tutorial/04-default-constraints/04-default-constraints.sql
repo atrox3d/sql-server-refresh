@@ -45,6 +45,8 @@ IF OBJECT_ID('sample.dbo.DF_tblPerson_GenderId', 'D') IS NOT NULL
         ALTER TABLE sample.dbo.tblPerson DROP CONSTRAINT DF_tblPerson_GenderId;
         EXEC dbo.spInfo 'Default constraint DF_tblPerson_GenderId dropped.', 1;
     END
+ELSE
+    EXEC dbo.spInfo 'Default constraint DF_tblPerson_GenderId does not exist.', 1;
 GO
 /*
 ************************************************************************************
@@ -75,11 +77,11 @@ IF OBJECT_ID('sample.dbo.DF_tblPerson_GenderId', 'D') IS NULL
         ALTER TABLE sample.dbo.tblPerson
         ADD CONSTRAINT DF_tblPerson_GenderId
         DEFAULT 3 FOR GenderId;
-        PRINT 'INFO | Default constraint DF_tblPerson_GenderId added.';
+        EXEC dbo.spInfo  'Default constraint DF_tblPerson_GenderId added.', 1;
     END
 ELSE
     BEGIN
-        PRINT 'INFO | Default constraint DF_tblPerson_GenderId already exists.'
+        EXEC dbo.spInfo 'Default constraint DF_tblPerson_GenderId already exists.'
     END
 GO
 

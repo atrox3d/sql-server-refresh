@@ -81,14 +81,17 @@ BEGIN
     EXEC dbo.spInfo @msg;
     SET @msg ='DROPPING Foreign Key ' + @FK_NAME;
     EXEC dbo.spInfo @msg;
+
     ALTER TABLE [dbo].[tblPerson]
         DROP CONSTRAINT [FK_tblPerson_tblGender];
+    
     SET @msg = 'Foreign Key ' + @FK_NAME + ' dropped.';
     EXEC dbo.spInfo @msg;
 END
 
 SET @msg = 'CREATING Foreign Key ' + @FK_NAME;
 EXEC dbo.spInfo @msg;
+
 ALTER TABLE [dbo].[tblPerson]               -- object do modify
 ADD CONSTRAINT [FK_tblPerson_tblGender]     -- name of constraint
 FOREIGN KEY ([GenderId])                    -- foreign key column
