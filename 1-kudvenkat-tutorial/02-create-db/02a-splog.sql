@@ -85,6 +85,7 @@ BEGIN
     WHERE [isDisplayed] = 0;
 END
 GO
+
 CREATE OR ALTER PROCEDURE dbo.spLog
     @Level NVARCHAR(10),    -- failing to specify size defaults to 1 !!!
     @Message NVARCHAR(MAX),
@@ -146,16 +147,18 @@ CREATE OR ALTER PROCEDURE dbo.spError
     @Flush BIT = 0
 AS
 BEGIN
-    EXEC dbo.spLog 'ERROR', @Message, @Flush;
+    EXEC dbo.spLog 'ERROR', @Message;
     DECLARE @ErrorMsg NVARCHAR(MAX) = ''
     -- SELECT ERROR_NUMBER(), ERROR_MESSAGE();
-    IF ERROR_MESSAGE() IS NOT NULL
+    IF ERROR_NUMBER() IS NOT NULL
     BEGIN
         SET @ErrorMsg = FORMATMESSAGE('ERROR_NUMBER: %i', ERROR_NUMBER());
-        EXEC dbo.spLog 'ERROR', @ErrorMsg, @Flush;
+        EXEC dbo.spLog 'ERROR', @ErrorMsg;
         SET @ErrorMsg = FORMATMESSAGE('ERROR_MESSAGE: %s', ERROR_MESSAGE());
-        EXEC dbo.spLog 'ERROR', @ErrorMsg, @Flush;
+        EXEC dbo.spLog 'ERROR', @ErrorMsg;
     END
+    IF @Flush = 1
+        EXEC dbo.spFlush
 END
 GO
 

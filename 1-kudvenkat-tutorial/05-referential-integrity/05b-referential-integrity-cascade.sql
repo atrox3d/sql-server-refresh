@@ -5,7 +5,9 @@ GO
 SET NOCOUNT ON;
 
 SELECT DB_NAME() AS db_name;
-PRINT 'INFO | Initial Database Context: ' + DB_NAME();
+DECLARE @Msg NVARCHAR(MAX) = 'Initial Database Context: ' + DB_NAME();
+EXEC dbo.spInfo @Msg, 1;
+GO
 GO
 
 --*********************************
@@ -15,14 +17,14 @@ IF OBJECT_ID('sample.dbo.FK_tblPerson_tblGender', 'F') IS NOT NULL
     BEGIN
         -- 1. Drop the existing strict constraint
         ALTER TABLE sample.dbo.tblPerson DROP CONSTRAINT FK_tblPerson_tblGender;
-        PRINT 'INFO | Foreign Key FK_tblPerson_tblGender dropped.';
+        EXEC dbo.spInfo 'Foreign Key FK_tblPerson_tblGender dropped.', 1;
     END
 GO
 
 --*********************************
 --- prepare data
 --*********************************
-PRINT 'INFO | Executing sp_ResetDemoData...'
+EXEC dbo.spInfo 'Executing sp_ResetDemoData...', 1;
 EXEC dbo.sp_ResetDemoData;
 GO
 
@@ -32,7 +34,7 @@ GO
 ALTER TABLE sample.dbo.tblPerson
 ADD CONSTRAINT FK_tblPerson_tblGender
 FOREIGN KEY (GenderId) REFERENCES sample.dbo.tblGender(ID)
-PRINT 'INFO | Foreign Key FK_tblPerson_tblGender recreated without cascading.';
+EXEC dbo.spInfo 'Foreign Key FK_tblPerson_tblGender recreated without cascading.', 1;
 GO
 
 SELECT * FROM sample.dbo.tblGender;
@@ -44,8 +46,14 @@ WHERE ID = 2;
 --- start lesson
 --*********************************
 -- try to delete gender id 2 violating FK, because we would obtain orphan rows with genderid 2
-PRINT 'INFO | Trying to delete gender id 2 violating FK...'
-DELETE FROM tblGender WHERE ID = 2;
+BEGIN TRY
+    EXEC dbo.spInfo 'Trying to delete gender id 2 violating FK...', 1;
+    DELETE FROM tblGender WHERE ID = 2;
+END TRY
+BEGIN CATCH
+    EXEC dbo.spError 'An error occurred. Execution jumped to the CATCH block.', 1;
+END CATCH
+GO
 -- The DELETE statement conflicted with the REFERENCE constraint "FK_tblPerson_tblGender". 
 -- The conflict occurred in database "sample", table "dbo.tblPerson", column 'GenderId'.
 
@@ -66,20 +74,20 @@ IF OBJECT_ID('sample.dbo.FK_tblPerson_tblGender', 'F') IS NOT NULL
     BEGIN
         -- 1. Drop the existing strict constraint
         ALTER TABLE sample.dbo.tblPerson DROP CONSTRAINT FK_tblPerson_tblGender;
-        PRINT 'INFO | Foreign Key FK_tblPerson_tblGender dropped.';
+        EXEC dbo.spInfo 'Foreign Key FK_tblPerson_tblGender dropped.', 1;
     END
 -- 2. Re-create it with the Cascade rule
 ALTER TABLE sample.dbo.tblPerson
 ADD CONSTRAINT FK_tblPerson_tblGender
 FOREIGN KEY (GenderId) REFERENCES sample.dbo.tblGender(ID)
 ON DELETE CASCADE;
-PRINT 'INFO | Foreign Key FK_tblPerson_tblGender recreated with cascading.';
+EXEC dbo.spInfo 'Foreign Key FK_tblPerson_tblGender recreated with cascading.', 1;
 GO
 
 -- retry to delete gender id 2 violating FK, because we would obtain orphan rows with genderid 2
 -- this time the on delete clause will delete corresponding rows
 DELETE FROM tblGender WHERE ID = 2;
-PRINT 'INFO | Data deleted from dbo.tblGender, corresponding records in dbo.tblPerson deleted';
+EXEC dbo.spInfo 'Data deleted from dbo.tblGender, corresponding records in dbo.tblPerson deleted', 1;
 GO
 
 SELECT * FROM sample.dbo.tblGender;

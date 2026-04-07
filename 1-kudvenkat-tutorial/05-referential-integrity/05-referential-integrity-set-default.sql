@@ -5,7 +5,8 @@ GO
 SET NOCOUNT ON;
 
 SELECT DB_NAME() AS db_name;
-PRINT 'INFO | Initial Database Context: ' + DB_NAME();
+DECLARE @Msg NVARCHAR(MAX) = 'Initial Database Context: ' + DB_NAME();
+EXEC dbo.spInfo @Msg, 1;
 GO
 /*
 ************************************************************************************
@@ -22,32 +23,32 @@ BEGIN
     IF OBJECT_ID('sample.dbo.FK_tblPerson_tblGender', 'F') IS NOT NULL
     BEGIN
         ALTER TABLE sample.dbo.tblPerson DROP CONSTRAINT FK_tblPerson_tblGender;
-        PRINT 'INFO | sp_delete_tblPerson_FK: Foreign Key FK_tblPerson_tblGender dropped.';
+        EXEC dbo.spInfo 'sp_delete_tblPerson_FK: Foreign Key FK_tblPerson_tblGender dropped.', 1;
     END
     ELSE
-        PRINT 'INFO | sp_delete_tblPerson_FK: Foreign Key FK_tblPerson_tblGender not found.';
+        EXEC dbo.spInfo 'sp_delete_tblPerson_FK: Foreign Key FK_tblPerson_tblGender not found.', 1;
 END
 GO
 
 CREATE OR ALTER PROCEDURE dbo.sp_ResetDemoData
 AS
 BEGIN
-    PRINT 'INFO | sp_ResetDemoData: Resetting data...';
+    EXEC dbo.spInfo 'sp_ResetDemoData: Resetting data...', 1;
 
     -- 1. Clean up (Order matters due to Foreign Keys!)
     -- We must delete Child (Person) before Parent (Gender)
-    PRINT 'INFO | sp_ResetDemoData: deleting tblPerson...';
+    EXEC dbo.spInfo 'sp_ResetDemoData: deleting tblPerson...', 1;
     DELETE FROM sample.dbo.tblPerson;
-    PRINT 'INFO | sp_ResetDemoData: deleting tblGender...';
+    EXEC dbo.spInfo 'sp_ResetDemoData: deleting tblGender...', 1;
     DELETE FROM sample.dbo.tblGender;
 
     -- 2. Reseed Parent Table
-    PRINT 'INFO | sp_ResetDemoData: inserting into tblGender...';
+    EXEC dbo.spInfo 'sp_ResetDemoData: inserting into tblGender...', 1;
     INSERT INTO sample.dbo.tblGender (ID, Gender)
     VALUES (1, 'Male'), (2, 'Female'), (3, 'Unknown');
 
     -- 3. Reseed Child Table
-    PRINT 'INFO | sp_ResetDemoData: inserting into tblPerson...';
+    EXEC dbo.spInfo 'sp_ResetDemoData: inserting into tblPerson...', 1;
     INSERT INTO sample.dbo.tblPerson (ID, Name, Email, GenderId)
     VALUES 
         (1, 'john',   'j@j.com',      1),
@@ -56,7 +57,7 @@ BEGIN
         (4, 'sara',   's@r.com',      1),
         (5, 'Johnny', 'j@r.com',      2);
 
-    PRINT 'INFO | sp_ResetDemoData: Data reset complete.';
+    EXEC dbo.spInfo 'sp_ResetDemoData: Data reset complete.', 1;
 END
 GO
 /*
@@ -66,9 +67,9 @@ GO
 
 ************************************************************************************
 */
-PRINT 'INFO | Executing sp_delete_tblPerson_FK...'
+EXEC dbo.spInfo 'Executing sp_delete_tblPerson_FK...', 1;
 EXEC dbo.sp_delete_tblPerson_FK;
-PRINT 'INFO | Executing sp_ResetDemoData...'
+EXEC dbo.spInfo 'Executing sp_ResetDemoData...', 1;
 EXEC dbo.sp_ResetDemoData;
 GO
 /*
@@ -81,7 +82,7 @@ GO
 ALTER TABLE sample.dbo.tblPerson
 ADD CONSTRAINT FK_tblPerson_tblGender
 FOREIGN KEY (GenderId) REFERENCES sample.dbo.tblGender(ID)
-PRINT 'INFO | Foreign Key FK_tblPerson_tblGender recreated without cascading.';
+EXEC dbo.spInfo 'Foreign Key FK_tblPerson_tblGender recreated without cascading.', 1;
 GO
 
 SELECT 
@@ -100,8 +101,14 @@ GO
 ************************************************************************************
 */
 -- try to delete gender id 2 violating FK, because we would obtain orphan rows with genderid 2
-PRINT 'INFO | Trying to delete gender id 2 violating FK...'
-DELETE FROM tblGender WHERE ID = 2;
+BEGIN TRY
+    EXEC dbo.spInfo 'Trying to delete gender id 2 violating FK...';
+    DELETE FROM tblGender WHERE ID = 2;
+END TRY
+BEGIN CATCH
+    EXEC dbo.spError 'An error occurred. Execution jumped to the CATCH block.', 1;
+END CATCH
+GO
 /*
 The DELETE statement conflicted with the REFERENCE constraint "FK_tblPerson_tblGender". 
 The conflict occurred in database "sample", table "dbo.tblPerson", column 'GenderId'.
@@ -126,7 +133,7 @@ IF OBJECT_ID('sample.dbo.FK_tblPerson_tblGender', 'F') IS NOT NULL
     BEGIN
         -- 1. Drop the existing strict constraint
         ALTER TABLE sample.dbo.tblPerson DROP CONSTRAINT FK_tblPerson_tblGender;
-        PRINT 'INFO | Foreign Key FK_tblPerson_tblGender dropped.';
+        EXEC dbo.spInfo 'Foreign Key FK_tblPerson_tblGender dropped.', 1;
     END
 -- 2. Re-create it with the set default rule
 ALTER TABLE sample.dbo.tblPerson            -- target table
@@ -135,7 +142,7 @@ FOREIGN KEY (GenderId)                      -- foreign key column
 REFERENCES sample.dbo.tblGender(ID)         -- external referenced column
 ON DELETE SET DEFAULT;                      -- on delete action: set default: 
                                             -- default constraint: DF_tblPerson_GenderId -> 3
-PRINT 'INFO | Foreign Key FK_tblPerson_tblGender recreated with cascading.';
+EXEC dbo.spInfo 'Foreign Key FK_tblPerson_tblGender recreated with cascading.', 1;
 GO
 
 /*
@@ -145,7 +152,7 @@ GO
     default constraint: DF_tblPerson_GenderId -> 3
 */
 DELETE FROM tblGender WHERE ID = 2;
-PRINT 'INFO | Data deleted from dbo.tblGender, corresponding records in dbo.tblPerson set to default';
+EXEC dbo.spInfo 'Data deleted from dbo.tblGender, corresponding records in dbo.tblPerson set to default', 1;
 GO
 
 
