@@ -13,13 +13,19 @@ GO
 SET NOCOUNT ON;
 
 SELECT DB_NAME() AS db_name;
-PRINT 'INFO | Initial Database Context: ' + DB_NAME();
+DECLARE @Msg NVARCHAR(MAX) = 'Initial Database Context: ' + DB_NAME();
+EXEC dbo.spInfo @Msg, 1;
 GO
 
+
+/*
+************************************************************************************
+    re-create tblEmployee
+************************************************************************************
+*/
 IF OBJECT_ID('dbo.tblEmployee', 'U') IS NOT NULL
     DROP TABLE dbo.tblEmployee;
 GO
-
 CREATE TABLE dbo.tblEmployee (
     EmployeeId INT NOT NULL PRIMARY KEY IDENTITY(1,1),
     Name NVARCHAR(50) NOT NULL,
@@ -28,16 +34,22 @@ CREATE TABLE dbo.tblEmployee (
 GO
 
 PRINT 'INFO | Inserting data with Manager relationships...';
--- We use IDENTITY_INSERT to manually specify EmployeeId so we can reliably set ManagerId
+/* 
+    We use IDENTITY_INSERT to manually specify EmployeeId so we can reliably set ManagerId 
+*/
 SET IDENTITY_INSERT dbo.tblEmployee ON;
 
---                          Todd (3)
---                           |
---                          Mike (1)
---                           |
---               +-----------+---------+
---               |           |         |
---              Rob (2)     Ben (4)   Sam (5)
+/*
+************************************************************************************
+                    Todd (3)
+                    |
+                    Mike (1)
+                    |
+        +-----------+-----------+
+        |           |           |
+        Rob (2)     Ben (4)     Sam (5)
+************************************************************************************
+*/
 INSERT INTO dbo.tblEmployee (EmployeeId, Name, ManagerId)
 VALUES 
 (1, 'Mike', 3),     -- Reports to Todd
@@ -46,67 +58,85 @@ VALUES
 (4, 'Ben',  1),     -- Reports to Mike
 (5, 'Sam',  1);     -- Reports to Mike
 
+/* 
+    disable IDENTITY_INSERT 
+*/
 SET IDENTITY_INSERT dbo.tblEmployee OFF;
 GO
 
--- self join
+/*
+************************************************************************************
+    self LEFT join: match employee with manager
+************************************************************************************
+*/
 SELECT      E.Name as Employee, M.Name as Manager
 FROM        dbo.tblEmployee E
 LEFT JOIN   dbo.tblEmployee M
 ON          E.ManagerId = M.EmployeeId
 GO
 
--------------------------------------------------------------------------
---      ISNULL
--------------------------------------------------------------------------
+/*
+************************************************************************************
+    ISNULL: evaluates to the first non-null argument, only 2 arguments
+************************************************************************************
+*/
 select 
-    ISNULL(NULL,         'No Manager') as [isnull-null],
-    ISNULL('NOT NULL',   'No Manager') as [isnull-notnull]
+    ISNULL(NULL,         'No Manager') as [isnull(null)],
+    ISNULL('NOT NULL',   'No Manager') as [isnull(notnull)]
 ;
 GO
 
--------------------------------------------------------------------------
---      COALESCE
--------------------------------------------------------------------------
+/*
+************************************************************************************
+    COALESCE: evaluates to the first non-null argument, multiple arguments
+************************************************************************************
+*/
 select 
-    COALESCE(NULL,         'No Manager') as [coalesce-null],
-    COALESCE('NOT NULL',   'No Manager') as [coalesce-notnull]
+    COALESCE(NULL,         'No Manager') as [coalesce(null)],
+    COALESCE('NOT NULL',   'No Manager') as [coalesce(notnull)]
 ;
 GO
 
--------------------------------------------------------------------------
---      CASE WHEN
--------------------------------------------------------------------------
+/*
+************************************************************************************
+    CASE WHEN
+************************************************************************************
+*/
 select
     CASE
         WHEN 
             NULL IS NULL THEN 'No Manager'
         ELSE 
             'NOT NULL'
-    END AS [case-null],
+    END AS [case when null],
         
     CASE 
         WHEN
             'NOT NULL' IS NULL THEN 'No Manager'
         ELSE 
             'NOT NULL'
-    END AS [case-notnull]
+    END AS [case when notnull]
 ;
 GO
 
 
--------------------------------------------------------------------------
--- self join
--- test all
--------------------------------------------------------------------------
+/*
+************************************************************************************
+    SELF JOIN: match employee with manager
+    TEST:
+        - ISNULL
+        - COALESCE
+        - CASE WHEN
+************************************************************************************
+*/
 SELECT      
-            E.Name as Employee, 
-            ISNULL(M.Name, 'No Manager') as [isnull-Manager],
-            COALESCE(M.Name, 'No Manager') as [coalesce-Manager],
+            E.Name as Employee,                                     -- name
+            ISNULL(M.Name, 'No Manager') as [isnull(M.name)],       -- manager name or no manager
+            COALESCE(M.Name, 'No Manager') as [coalesce(M.name)],   -- manager name or no manager
             CASE
-                WHEN M.Name IS NULL THEN 'No Manager'
+                WHEN M.Name IS NULL THEN 'No Manager'               -- manager name or no manager
                 ELSE M.Name
-            END AS [case-Manager]
+            END AS [case M.name is null]
 FROM        dbo.tblEmployee E
 LEFT JOIN   dbo.tblEmployee M
 ON          E.ManagerId = M.EmployeeId
