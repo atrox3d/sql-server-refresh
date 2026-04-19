@@ -59,9 +59,10 @@ AS (
     FROM [Queue]
     -- WHERE total_weight <= 1000       -- cannot reference alias in the where clause
 )
-SELECT TOP 1 *                          -- get the first in descending order
-FROM totals
-WHERE running_weight <= 1000            -- exclude running weight > 1000
+SELECT TOP 1                            -- get the first in descending order
+    *                                   -- return all columns
+FROM totals                             -- reference CTE
+WHERE running_weight <= 1000            -- exclude running weight > 1000 using windows function alias
 ORDER BY turn DESC                      -- ensure we got the last as first value
 ;
 
