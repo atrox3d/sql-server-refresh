@@ -55,7 +55,8 @@ AS (
             OVER
             (
                 ORDER BY turn           -- compute running weight in turn order
-            ) AS running_weight         -- create the running weight column
+            ) 
+            AS running_weight           -- create the running weight column
     FROM [Queue]
     -- WHERE total_weight <= 1000       -- cannot reference alias in the where clause
 )
