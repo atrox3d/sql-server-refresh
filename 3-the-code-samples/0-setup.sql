@@ -3,8 +3,6 @@ BEGIN
     BEGIN TRY
         CREATE DATABASE thecodesamples;
         PRINT 'INFO | Database thecodesamples created.';
-        use thecodesamples;
-        PRINT 'INFO | Database thecodesamples selected.';
     END TRY
     BEGIN CATCH
         -- show error if db cannot be deleted
@@ -17,3 +15,5 @@ BEGIN
 END
 GO
 
+use thecodesamples;
+PRINT 'INFO | Database thecodesamples selected.';

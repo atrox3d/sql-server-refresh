@@ -42,7 +42,7 @@ order by turn
 GO
 /*
     ############################################################
-    #   BEGIN EXERCISE
+    #   START EXERCISE
     ############################################################
 */
 WITH totals                             -- need CTE to create running_weight alias to reference later
